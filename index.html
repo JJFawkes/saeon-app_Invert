@@ -1,0 +1,3782 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<link rel="manifest" href="./manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>SAEON Offshore Marine Invertebrates — Field Study &amp; Quiz</title>
+  <!-- Google Fonts: Inter for UI legibility & JetBrains Mono for specimen codes/pages -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            abyss: {
+              950: '#060d16',
+              900: '#091322',
+              800: '#0e1a2b',
+              700: '#15253d',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Base abyssal research styling & subtle ocean depth atmosphere */
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: #060d16;
+      background-image:
+        radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.07) 0%, transparent 42%),
+        radial-gradient(circle at 85% 12%, rgba(16, 185, 129, 0.05) 0%, transparent 38%);
+      color: #f1f5f9;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Hide horizontal scrollbars on pill strips while preserving touch scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Subtle dark scrollbars for desktop */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    /* Smooth card entrance & swipe transition */
+    .card-stage {
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+      touch-action: pan-y;
+    }
+    .card-stage.swiping {
+      transition: none;
+    }
+
+    /* Lightbox zoom image transitions */
+    .lightbox-img {
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center center;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .lightbox-img.dragging {
+      transition: none;
+    }
+
+    /* Pure black specimen container so 827x827 JPEGs have zero visible edges */
+    .specimen-black-box {
+      background-color: #000000;
+      aspect-ratio: 1 / 1;
+    }
+
+    /* Exact 650:588 coastal distribution map container */
+    .map-frame-box {
+      aspect-ratio: 650 / 588;
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-sky-500/30 selection:text-sky-200">
+
+  <!-- ==================== STICKY TOP HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-[#060d16]/95 backdrop-blur-md border-b border-slate-800/90">
+    <div class="max-w-5xl mx-auto px-3 sm:px-5 py-2.5">
+      <!-- Top Row: Branding, Data Status Pill & Folder Picker -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <!-- Nautilus / Deep-Sea Icon -->
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500/20 to-emerald-500/20 border border-sky-400/30 flex items-center justify-center shrink-0 shadow-inner">
+            <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a9 9 0 1 0 9 9c0-3.87-3.13-7-7-7a5 5 0 0 0-5 5 3 3 0 0 0 3 3 1.5 1.5 0 0 0 1.5-1.5" />
+              <path d="M12 3v3M21 12h-3M5.6 5.6l2.1 2.1" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-sm sm:text-base font-bold tracking-tight text-white truncate">
+                SAEON Field Guide To The Offshore Marine Invertebrates Of South Africa
+              </h1>
+              <!-- Active Dataset Status Pill -->
+              <span id="datasetBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="datasetBadgeText">Demo Data (16 spp.)</span>
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate hidden sm:block">
+              Atkinson &amp; Sink (2018) • Marine Invertebrate Field Guide
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Controls: Local Folder Loader -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <input
+            type="file"
+            id="folderPickerInput"
+            webkitdirectory
+            directory
+            multiple
+            class="hidden"
+            aria-label="Load extracted_species_data folder"
+          />
+          <button
+            type="button"
+            id="loadFolderBtn"
+            title="Select your local extracted_species_data folder (works offline without a server)"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#0e1a2b] hover:bg-[#15253d] active:scale-[0.98] text-sky-300 border border-sky-500/30 transition shadow-sm min-h-[40px]"
+          >
+            <svg class="w-4 h-4 text-sky-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              <path d="M12 11v6M9 14l3-3 3 3" />
+            </svg>
+            <span>Load Folder</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Primary Navigation Tabs -->
+      <nav aria-label="Study Modes" class="grid grid-cols-3 gap-1.5 mt-2.5 bg-[#091322] p-1 rounded-xl border border-slate-800/80">
+        <button
+          type="button"
+          data-tab="flashcards"
+          class="nav-tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs sm:text-sm font-semibold transition min-h-[40px]"
+        >
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="14" rx="2" />
+            <path d="M7 20h10" />
+          </svg>
+          <span>Flashcards</span>
+          <span id="navMasteryCount" class="hidden xs:inline-block px-1.5 py-0.2 rounded-md text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">0/16</span>
+        </button>
+
+        <button
+          type="button"
+          data-tab="quiz"
+          class="nav-tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs sm:text-sm font-semibold transition min-h-[40px]"
+        >
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>Phylum Quiz</span>
+        </button>
+
+        <button
+          type="button"
+          data-tab="index"
+          class="nav-tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs sm:text-sm font-semibold transition min-h-[40px]"
+        >
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+          <span>Field Index</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================== TOAST NOTIFICATION BANNER ==================== -->
+  <div id="toastContainer" class="fixed top-28 right-3 left-3 sm:left-auto sm:w-96 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-5 pt-4 pb-24 sm:pb-12">
+
+    <!-- ================================================================
+         VIEW 1: FLASHCARD STUDY MODE
+         ================================================================ -->
+    <section id="view-flashcards" class="space-y-4">
+
+      <!-- Targeted Remediation Banner (visible when launched from Quiz Missed Species) -->
+      <div id="missedFilterBanner" class="hidden rounded-2xl bg-amber-500/10 border border-amber-500/35 p-3.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center shrink-0 font-bold text-sm">!</span>
+          <div class="min-w-0">
+            <p class="text-xs sm:text-sm font-semibold text-amber-200 truncate" id="missedFilterTitle">
+              Studying Missed Species from Quiz
+            </p>
+            <p class="text-[11px] text-amber-300/80">
+              Mark each species as Mastered once you recognize its diagnostic traits.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="clearMissedFilterBtn"
+          class="px-3 py-2 rounded-xl text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 shrink-0 min-h-[38px]"
+        >
+          Show All
+        </button>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800/90 p-3 sm:p-4 space-y-3 shadow-lg">
+        <!-- Row 1: Phylum Selector & Mastery Filter -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+          <!-- Phylum Dropdown -->
+          <div class="sm:col-span-6">
+            <label for="fcPhylumSelect" class="sr-only">Filter by Phylum</label>
+            <div class="relative">
+              <select
+                id="fcPhylumSelect"
+                class="w-full appearance-none bg-[#060d16] text-slate-100 text-xs sm:text-sm font-medium rounded-xl border border-slate-700/80 pl-3.5 pr-9 py-2.5 focus:outline-none focus:border-sky-400 min-h-[42px]"
+              ></select>
+              <svg class="w-4 h-4 text-slate-400 pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Status Filter Segmented Pills -->
+          <div class="sm:col-span-6 grid grid-cols-3 gap-1 bg-[#060d16] p-1 rounded-xl border border-slate-800">
+            <button type="button" data-fc-status="all" class="fc-status-btn py-1.5 px-2 rounded-lg text-xs font-semibold transition min-h-[34px]">
+              All
+            </button>
+            <button type="button" data-fc-status="review" class="fc-status-btn py-1.5 px-2 rounded-lg text-xs font-semibold transition min-h-[34px]">
+              Needs Review
+            </button>
+            <button type="button" data-fc-status="mastered" class="fc-status-btn py-1.5 px-2 rounded-lg text-xs font-semibold transition min-h-[34px]">
+              Mastered
+            </button>
+          </div>
+        </div>
+
+        <!-- Horizontal Phylum Quick-Pills (Desktop & Tablet convenience) -->
+        <div id="fcPhylumPills" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5"></div>
+
+        <!-- Row 2: Study Mode Toggles -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+          <!-- Front Side Toggle -->
+          <div class="inline-flex items-center bg-[#060d16] p-1 rounded-xl border border-slate-800">
+            <button type="button" data-fc-front="photo" class="fc-front-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">
+              Photo First
+            </button>
+            <button type="button" data-fc-front="name" class="fc-front-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">
+              Name First
+            </button>
+          </div>
+
+          <!-- Shuffle & Phylum Hint Toggles -->
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              id="fcShuffleToggle"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition min-h-[36px]"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 3 21 3 21 8" />
+                <line x1="4" y1="20" x2="21" y2="3" />
+                <polyline points="21 16 21 21 16 21" />
+                <line x1="15" y1="15" x2="21" y2="21" />
+                <line x1="4" y1="4" x2="9" y2="9" />
+              </svg>
+              <span>Shuffle</span>
+            </button>
+
+            <button
+              type="button"
+              id="fcHintToggle"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition min-h-[36px]"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>Phylum Hint</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty Filter State -->
+      <div id="fcEmptyState" class="hidden rounded-2xl bg-[#0e1a2b] border border-slate-800 p-8 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 mx-auto flex items-center justify-center">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-white">No species match the current filter</h3>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+          Try switching the status filter back to "All" or selecting another Phylum.
+        </p>
+        <button
+          type="button"
+          id="fcResetFiltersBtn"
+          class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-sky-500 hover:bg-sky-400 text-slate-950 transition min-h-[42px]"
+        >
+          Reset Filters
+        </button>
+      </div>
+
+      <!-- Active Flashcard Container -->
+      <div id="fcActiveContainer" class="space-y-3">
+        <!-- Card Meta Header: Counter, Swipe Hint & Mastery Status -->
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <span id="fcCounterText" class="text-xs sm:text-sm font-semibold text-slate-300">
+              Card 1 of 16
+            </span>
+            <span class="text-[11px] text-slate-500 hidden sm:inline">• Swipe or use arrow keys</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="fcCardMasteryBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"></span>
+          </div>
+        </div>
+
+        <!-- Swipeable Flashcard Surface -->
+        <div
+          id="fcCardSurface"
+          class="card-stage rounded-2xl bg-[#0e1a2b] border border-slate-800/90 shadow-2xl overflow-hidden cursor-pointer select-none"
+        >
+          <!-- === CARD FRONT === -->
+          <div id="fcFrontView" class="p-4 sm:p-6 space-y-4">
+            <!-- Photo First Front -->
+            <div id="fcFrontPhotoMode" class="space-y-3">
+              <div class="specimen-black-box w-full max-w-[440px] mx-auto rounded-2xl overflow-hidden border border-slate-800 relative group shadow-inner">
+                <img
+                  id="fcFrontImg"
+                  src=""
+                  alt="Marine invertebrate specimen"
+                  class="w-full h-full object-contain"
+                />
+
+                <!-- Top-Left Optional Phylum Hint -->
+                <div id="fcFrontPhylumHint" class="hidden absolute top-3 left-3">
+                  <span id="fcFrontPhylumText" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-950/90 text-sky-300 border border-sky-400/30 backdrop-blur-sm"></span>
+                </div>
+
+                <!-- Bottom-Left Multi-Photo Switcher Pills -->
+                <div id="fcFrontPhotoPills" class="hidden absolute bottom-3 left-3 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-sm p-1 rounded-xl border border-slate-700/70"></div>
+
+                <!-- Bottom-Right Zoom Button -->
+                <button
+                  type="button"
+                  id="fcFrontZoomBtn"
+                  title="Enlarge Specimen Photo"
+                  aria-label="Enlarge specimen photo"
+                  class="absolute bottom-3 right-3 w-10 h-10 rounded-xl bg-slate-900/85 hover:bg-sky-500 hover:text-slate-950 text-slate-200 border border-slate-700/80 flex items-center justify-center backdrop-blur-sm transition shadow-lg"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="11" y1="8" x2="11" y2="14" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Name First Front -->
+            <div id="fcFrontNameMode" class="hidden py-12 sm:py-16 px-4 text-center space-y-3">
+              <div id="fcNameFrontPhylumWrap" class="hidden">
+                <span id="fcNameFrontPhylumText" class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-400/30"></span>
+              </div>
+              <h2 id="fcNameFrontSci" class="text-2xl sm:text-4xl font-bold italic text-white tracking-tight"></h2>
+              <p id="fcNameFrontCommon" class="text-sm sm:text-base font-medium text-amber-300/90"></p>
+              <div class="pt-2">
+                <span id="fcNameFrontCode" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#060d16] text-slate-400 border border-slate-800"></span>
+              </div>
+            </div>
+
+            <!-- Front Footer Reveal Prompt -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs text-slate-400">
+              <span>Tap anywhere on card to flip</span>
+              <span class="inline-flex items-center gap-1 font-semibold text-sky-400">
+                <span>Reveal Details</span>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- === CARD BACK === -->
+          <div id="fcBackView" class="hidden p-4 sm:p-6 space-y-5 cursor-default">
+            <!-- Top Taxonomy & Guide Metadata Header -->
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-slate-800">
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span id="fcBackPhylum" class="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-400/30"></span>
+                  <span id="fcBackCode" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-slate-300 border border-slate-700/80"></span>
+                  <span id="fcBackPage" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-amber-300/90 border border-amber-500/25"></span>
+                </div>
+                <h2 id="fcBackSciName" class="text-xl sm:text-2xl font-bold italic text-white leading-snug pt-1"></h2>
+                <p id="fcBackCommonName" class="text-sm sm:text-base font-medium text-amber-300"></p>
+              </div>
+
+              <button
+                type="button"
+                id="fcFlipToFrontBtn"
+                class="self-start inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#060d16] hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition shrink-0 min-h-[38px]"
+              >
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                </svg>
+                <span>Show Front</span>
+              </button>
+            </div>
+
+            <!-- Media Section: Specimen Photos + Coastal Distribution Map -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <!-- Specimen Photo + Thumbnail Strip -->
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Specimen Plate</span>
+                  <span id="fcBackPhotoCountLabel" class="text-[11px] font-mono text-slate-500">827×827</span>
+                </div>
+                <div class="specimen-black-box w-full rounded-xl overflow-hidden border border-slate-800 relative group">
+                  <img
+                    id="fcBackMainImg"
+                    src=""
+                    alt="Specimen plate"
+                    class="w-full h-full object-contain cursor-zoom-in"
+                  />
+                  <button
+                    type="button"
+                    id="fcBackImgZoomBtn"
+                    title="Enlarge Specimen Photo"
+                    class="absolute bottom-2.5 right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-900/85 hover:bg-sky-500 hover:text-slate-950 text-slate-200 text-xs font-semibold border border-slate-700/80 inline-flex items-center gap-1.5 backdrop-blur-sm transition"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <span>Zoom</span>
+                  </button>
+                </div>
+
+                <!-- Multi-image Thumbnail Strip -->
+                <div id="fcBackThumbStrip" class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-0.5"></div>
+              </div>
+
+              <!-- Coastal Distribution Map (650:588 aspect ratio) -->
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Coastal Distribution</span>
+                  <span class="text-[11px] font-mono text-slate-500">SA Shelf &amp; Slope</span>
+                </div>
+                <div class="map-frame-box w-full rounded-xl overflow-hidden border border-slate-700/90 relative shadow-md group">
+                  <img
+                    id="fcBackMapImg"
+                    src=""
+                    alt="South African coastal distribution map"
+                    class="w-full h-full object-contain cursor-zoom-in"
+                  />
+                  <button
+                    type="button"
+                    id="fcBackMapZoomBtn"
+                    title="Enlarge Distribution Map"
+                    class="absolute bottom-2.5 right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-sky-500 hover:text-slate-950 text-white text-xs font-semibold border border-slate-700 inline-flex items-center gap-1.5 shadow-md transition"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <span>Enlarge Map</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Distinguishing Features Panel -->
+            <div class="rounded-xl bg-[#091322] border border-cyan-500/25 p-4 space-y-2">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-sky-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-300">Distinguishing Features</h3>
+              </div>
+              <div id="fcBackFeatures" class="text-sm text-slate-200 leading-relaxed space-y-1.5"></div>
+            </div>
+
+            <!-- Spaced-Recall Self-Rating Actions -->
+            <div class="pt-1 space-y-2">
+              <p class="text-[11px] text-center text-slate-400">Rate your recall to update mastery progress:</p>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  id="fcStillLearningBtn"
+                  class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-amber-500/15 hover:bg-amber-500/25 active:scale-[0.99] text-amber-300 border border-amber-500/40 transition min-h-[48px]"
+                >
+                  <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  </svg>
+                  <span>Still Learning</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="fcMasteredBtn"
+                  class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 shadow-lg shadow-emerald-500/20 transition min-h-[48px]"
+                >
+                  <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Mastered</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Mobile-Friendly Bottom Navigation Bar -->
+      <div id="fcBottomControls" class="fixed bottom-0 left-0 right-0 sm:static z-30 bg-[#060d16]/95 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none border-t sm:border-t-0 border-slate-800/90 p-2.5 sm:p-0">
+        <div class="max-w-5xl mx-auto grid grid-cols-3 gap-2 sm:gap-3">
+          <button
+            type="button"
+            id="fcPrevBtn"
+            class="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs sm:text-sm font-semibold bg-[#0e1a2b] hover:bg-[#15253d] active:scale-[0.98] text-slate-200 border border-slate-700/80 transition min-h-[46px]"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <span>Previous</span>
+          </button>
+
+          <button
+            type="button"
+            id="fcFlipBtn"
+            class="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-400 active:scale-[0.98] text-slate-950 shadow-lg shadow-sky-500/20 transition min-h-[46px]"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+            <span id="fcFlipBtnLabel">Flip Card</span>
+          </button>
+
+          <button
+            type="button"
+            id="fcNextBtn"
+            class="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl text-xs sm:text-sm font-semibold bg-[#0e1a2b] hover:bg-[#15253d] active:scale-[0.98] text-slate-200 border border-slate-700/80 transition min-h-[46px]"
+          >
+            <span>Next</span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         VIEW 2: MULTIPLE-CHOICE QUIZ MODE GROUPED BY PHYLUM
+         ================================================================ -->
+    <section id="view-quiz" class="hidden space-y-5">
+
+      <!-- SUB-VIEW 2A: PHYLUM LOBBY -->
+      <div id="quizLobbyView" class="space-y-5">
+        <!-- Quiz Configuration Bar -->
+        <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800/90 p-4 space-y-3.5 shadow-lg">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-sky-300">Quiz Configuration</h2>
+            <span class="text-xs text-slate-400">Same-Phylum Distractors</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- Question Count -->
+            <div class="space-y-1.5">
+              <span class="text-[11px] font-semibold text-slate-400 block">Questions per Round</span>
+              <div class="grid grid-cols-4 gap-1 bg-[#060d16] p-1 rounded-xl border border-slate-800">
+                <button type="button" data-q-count="5" class="q-count-btn py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">5</button>
+                <button type="button" data-q-count="10" class="q-count-btn py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">10</button>
+                <button type="button" data-q-count="20" class="q-count-btn py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">20</button>
+                <button type="button" data-q-count="all" class="q-count-btn py-1.5 rounded-lg text-xs font-semibold transition min-h-[34px]">All</button>
+              </div>
+            </div>
+
+            <!-- Question Type -->
+            <div class="space-y-1.5">
+              <span class="text-[11px] font-semibold text-slate-400 block">Prompt Type</span>
+              <div class="grid grid-cols-3 gap-1 bg-[#060d16] p-1 rounded-xl border border-slate-800">
+                <button type="button" data-q-type="photo" class="q-type-btn py-1.5 px-1 rounded-lg text-xs font-semibold transition min-h-[34px]">Photo → Sp.</button>
+                <button type="button" data-q-type="features" class="q-type-btn py-1.5 px-1 rounded-lg text-xs font-semibold transition min-h-[34px]">Traits → Sp.</button>
+                <button type="button" data-q-type="mixed" class="q-type-btn py-1.5 px-1 rounded-lg text-xs font-semibold transition min-h-[34px]">Mixed</button>
+              </div>
+            </div>
+
+            <!-- Common Name Hints Toggle -->
+            <div class="space-y-1.5">
+              <span class="text-[11px] font-semibold text-slate-400 block">Answer Options</span>
+              <button
+                type="button"
+                id="qCommonHintToggle"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition min-h-[42px]"
+              >
+                <span>Show Common Name Hints</span>
+                <span id="qCommonHintStatus" class="px-2 py-0.5 rounded-md text-[10px] font-mono">ON</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Mixed All-Phyla Challenge Card -->
+        <div id="quizMixedHeroCard" class="rounded-2xl bg-gradient-to-br from-[#0e1a2b] via-[#112238] to-[#0b1829] border border-sky-500/35 p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30">
+              <span>ALL TAXA CHALLENGE</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-white">Mixed All-Phyla Survey</h3>
+            <p class="text-xs sm:text-sm text-slate-300" id="quizMixedSubtitle">
+              Test identification across all offshore invertebrate phyla with same-phylum distractors.
+            </p>
+            <div class="flex items-center gap-3 pt-1 text-xs">
+              <span id="quizMixedMasteryText" class="text-emerald-300 font-medium"></span>
+              <span id="quizMixedBestBadge" class="hidden px-2 py-0.5 rounded-md font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30"></span>
+            </div>
+          </div>
+          <button
+            type="button"
+            data-start-phylum="__ALL__"
+            class="px-5 py-3 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-400 active:scale-[0.98] text-slate-950 shadow-lg shadow-sky-500/20 transition shrink-0 min-h-[46px]"
+          >
+            Start Mixed Quiz
+          </button>
+        </div>
+
+        <!-- Phylum Cards Grid -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">Select a Phylum to Practice</h3>
+          <div id="quizPhylumGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
+        </div>
+      </div>
+
+      <!-- SUB-VIEW 2B: ACTIVE QUIZ SCREEN -->
+      <div id="quizActiveView" class="hidden space-y-4">
+        <!-- Top Quiz Status Bar -->
+        <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800 p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              id="quizExitBtn"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#060d16] hover:bg-slate-800 text-slate-300 border border-slate-700/80 min-h-[36px]"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span>Phyla</span>
+            </button>
+
+            <span id="quizActivePhylumBadge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/15 text-sky-300 border border-sky-400/30 truncate"></span>
+
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="px-2 py-1 rounded-lg bg-[#060d16] text-emerald-300 border border-slate-800">
+                Score: <strong id="quizScoreText">0</strong>
+              </span>
+              <span id="quizStreakBadge" class="px-2 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                Streak: <strong id="quizStreakText">0</strong>
+              </span>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span id="quizProgressLabel">Question 1 of 10</span>
+              <span id="quizPromptTypeLabel">Photo Identification</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-[#060d16] overflow-hidden border border-slate-800">
+              <div id="quizProgressBar" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 transition-all duration-300" style="width: 10%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Prompt Stage -->
+        <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800/90 p-4 sm:p-5 space-y-4 shadow-xl">
+          <p id="quizQuestionInstruction" class="text-xs sm:text-sm font-semibold text-sky-300">
+            Identify this South African offshore marine invertebrate:
+          </p>
+
+          <!-- Photo Prompt Stage -->
+          <div id="quizPhotoPrompt" class="specimen-black-box w-full max-w-[380px] mx-auto rounded-2xl overflow-hidden border border-slate-800 relative">
+            <img id="quizPromptImg" src="" alt="Quiz specimen" class="w-full h-full object-contain" />
+            <div id="quizPromptPhotoPills" class="hidden absolute bottom-3 left-3 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-sm p-1 rounded-xl border border-slate-700/70"></div>
+            <button
+              type="button"
+              id="quizPromptZoomBtn"
+              title="Enlarge Specimen Photo"
+              class="absolute bottom-3 right-3 w-10 h-10 rounded-xl bg-slate-900/85 hover:bg-sky-500 hover:text-slate-950 text-slate-200 border border-slate-700/80 flex items-center justify-center backdrop-blur-sm transition"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Features Prompt Stage -->
+          <div id="quizFeaturesPrompt" class="hidden rounded-xl bg-[#091322] border border-cyan-500/30 p-4 sm:p-5 space-y-2.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md text-[11px] font-mono bg-sky-500/15 text-sky-300 border border-sky-400/25">DIAGNOSTIC TRAITS</span>
+              <span id="quizFeaturesPhylumHint" class="text-xs text-slate-400"></span>
+            </div>
+            <div id="quizFeaturesPromptText" class="text-sm sm:text-base text-slate-100 leading-relaxed space-y-1.5"></div>
+          </div>
+
+          <!-- 4 Multiple-Choice Options (A-D) -->
+          <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1"></div>
+        </div>
+
+        <!-- Immediate Post-Answer Learning Drawer -->
+        <div id="quizLearningDrawer" class="hidden rounded-2xl bg-[#0e1a2b] border-2 p-4 sm:p-5 space-y-4 shadow-2xl">
+          <!-- Verdict Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <div id="quizVerdictIcon" class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-base shrink-0"></div>
+              <div>
+                <p id="quizVerdictTitle" class="text-sm sm:text-base font-bold"></p>
+                <p class="text-xs text-slate-300">
+                  <span id="quizRevealSciName" class="italic font-semibold text-white"></span>
+                  <span id="quizRevealCommonName" class="text-amber-300 ml-1.5"></span>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="quizRevealCode" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-slate-300 border border-slate-700"></span>
+              <span id="quizRevealPage" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-amber-300 border border-amber-500/30"></span>
+            </div>
+          </div>
+
+          <!-- Diagnostic Features + Distribution Map & Photo -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-7 space-y-3">
+              <div class="rounded-xl bg-[#091322] border border-slate-800 p-3.5 space-y-1.5">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-sky-300">Distinguishing Features</h4>
+                <div id="quizRevealFeatures" class="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-1"></div>
+              </div>
+
+              <!-- Specimen thumbnail (especially useful when prompt was Features-only) -->
+              <div class="flex items-center gap-3 rounded-xl bg-[#091322] border border-slate-800 p-2.5">
+                <div class="specimen-black-box w-16 h-16 rounded-lg overflow-hidden border border-slate-700 shrink-0">
+                  <img id="quizRevealThumbImg" src="" alt="Specimen thumbnail" class="w-full h-full object-contain cursor-zoom-in" />
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-slate-200">Reference Plate</p>
+                  <p class="text-[11px] text-slate-400">Tap image or map to inspect high-resolution details.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coastal Distribution Map (650:588) -->
+            <div class="md:col-span-5 space-y-1.5">
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">Coastal Distribution Map</span>
+              <div class="map-frame-box w-full rounded-xl overflow-hidden border border-slate-700 relative">
+                <img id="quizRevealMapImg" src="" alt="Coastal distribution map" class="w-full h-full object-contain cursor-zoom-in" />
+                <button
+                  type="button"
+                  id="quizRevealMapZoomBtn"
+                  class="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-slate-900/90 hover:bg-sky-500 hover:text-slate-950 text-white text-[11px] font-semibold border border-slate-700 transition"
+                >
+                  Enlarge Map
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next Question CTA -->
+          <button
+            type="button"
+            id="quizNextBtn"
+            class="w-full py-3.5 px-5 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-400 active:scale-[0.99] text-slate-950 shadow-lg shadow-sky-500/20 transition min-h-[48px]"
+          >
+            Next Question
+          </button>
+        </div>
+      </div>
+
+      <!-- SUB-VIEW 2C: QUIZ RESULTS & TARGETED REMEDIATION -->
+      <div id="quizResultsView" class="hidden space-y-5">
+        <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800 p-5 sm:p-7 text-center space-y-4 shadow-2xl">
+          <div id="quizResultNewBestBadge" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40">
+            <span>★ NEW PHYLUM BEST SCORE</span>
+          </div>
+
+          <div class="space-y-1">
+            <p id="quizResultPhylumTitle" class="text-xs font-bold uppercase tracking-wider text-sky-400"></p>
+            <h2 id="quizResultPercent" class="text-4xl sm:text-5xl font-extrabold text-white">80%</h2>
+            <p id="quizResultSummaryText" class="text-sm text-slate-300">8 of 10 correct • Best streak: 5</p>
+          </div>
+
+          <!-- Targeted Remediation Button for Missed Species -->
+          <div id="quizRemediationBox" class="hidden pt-1">
+            <button
+              type="button"
+              id="studyMissedFlashcardsBtn"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 shadow-lg shadow-amber-500/20 transition min-h-[48px]"
+            >
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="4" width="18" height="14" rx="2" />
+                <path d="M7 20h10" />
+              </svg>
+              <span id="studyMissedBtnText">Study Missed Species in Flashcards (2)</span>
+            </button>
+          </div>
+
+          <!-- Retry / Lobby Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-2.5 pt-2">
+            <button
+              type="button"
+              id="quizRetryBtn"
+              class="px-4 py-3 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition min-h-[44px]"
+            >
+              Retry Quiz
+            </button>
+            <button
+              type="button"
+              id="quizBackToLobbyBtn"
+              class="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-[#060d16] hover:bg-slate-800 text-slate-200 border border-slate-700 transition min-h-[44px]"
+            >
+              Choose Another Phylum
+            </button>
+          </div>
+        </div>
+
+        <!-- Itemized Question Breakdown -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">Question Review (Tap any species to inspect)</h3>
+          <div id="quizResultsReviewList" class="space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         VIEW 3: SEARCHABLE FIELD INDEX
+         ================================================================ -->
+    <section id="view-index" class="hidden space-y-4">
+      <!-- Search & Filter Bar -->
+      <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800 p-3.5 sm:p-4 space-y-3 shadow-lg">
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            id="indexSearchInput"
+            placeholder="Search scientific name, common name, fb_code, or features..."
+            class="w-full bg-[#060d16] text-slate-100 placeholder-slate-500 text-xs sm:text-sm rounded-xl border border-slate-700/80 pl-10 pr-4 py-2.5 focus:outline-none focus:border-sky-400 min-h-[44px]"
+          />
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div id="indexPhylumPills" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 max-w-full"></div>
+          <span id="indexResultCount" class="text-xs font-mono text-slate-400">16 species</span>
+        </div>
+      </div>
+
+      <!-- Species Catalog List -->
+      <div id="indexListContainer" class="space-y-2"></div>
+    </section>
+
+  </main>
+
+  <!-- ==================== CC BY-SA 4.0 ATTRIBUTION FOOTER ==================== -->
+  <footer class="border-t border-slate-800/80 bg-[#060d16] py-5 px-4 text-center mb-14 sm:mb-0">
+    <div class="max-w-4xl mx-auto space-y-1">
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Species data &amp; imagery adapted from Atkinson &amp; Sink (2018),
+        <em class="text-slate-300">Field Guide to the Offshore Marine Invertebrates of South Africa</em>,
+        SAEON, licensed under
+        <a
+          href="https://creativecommons.org/licenses/by-sa/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sky-400 hover:underline font-medium"
+        >CC BY-SA 4.0</a>.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ==================== FULL SPECIMEN DOSSIER MODAL (FROM INDEX / REVIEW) ==================== -->
+  <div id="dossierModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#0e1a2b] border border-slate-700/90 rounded-t-3xl sm:rounded-2xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 z-10 bg-[#0e1a2b]/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-b border-slate-800 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="dossierPhylum" class="px-2 py-0.5 rounded-md text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-400/30"></span>
+            <span id="dossierCode" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-slate-300 border border-slate-700"></span>
+            <span id="dossierPage" class="px-2 py-0.5 rounded-md text-xs font-mono bg-[#060d16] text-amber-300 border border-amber-500/30"></span>
+          </div>
+          <h3 id="dossierSciName" class="text-lg sm:text-xl font-bold italic text-white truncate mt-1"></h3>
+        </div>
+        <button
+          type="button"
+          id="dossierCloseBtn"
+          aria-label="Close species details"
+          class="w-10 h-10 rounded-xl bg-[#060d16] hover:bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center shrink-0"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-5">
+        <p id="dossierCommonName" class="text-sm sm:text-base font-medium text-amber-300 -mt-2"></p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Specimen Photo</span>
+            <div class="specimen-black-box w-full rounded-xl overflow-hidden border border-slate-800 relative">
+              <img id="dossierMainImg" src="" alt="Specimen plate" class="w-full h-full object-contain cursor-zoom-in" />
+              <button
+                type="button"
+                id="dossierImgZoomBtn"
+                class="absolute bottom-2.5 right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-900/85 hover:bg-sky-500 hover:text-slate-950 text-white text-xs font-semibold border border-slate-700 transition"
+              >
+                Zoom
+              </button>
+            </div>
+            <div id="dossierThumbStrip" class="flex items-center gap-2 overflow-x-auto no-scrollbar"></div>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Coastal Distribution</span>
+            <div class="map-frame-box w-full rounded-xl overflow-hidden border border-slate-700 relative">
+              <img id="dossierMapImg" src="" alt="Distribution map" class="w-full h-full object-contain cursor-zoom-in" />
+              <button
+                type="button"
+                id="dossierMapZoomBtn"
+                class="absolute bottom-2.5 right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-sky-500 hover:text-slate-950 text-white text-xs font-semibold border border-slate-700 transition"
+              >
+                Enlarge Map
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-[#091322] border border-cyan-500/25 p-4 space-y-1.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-sky-300">Distinguishing Features</h4>
+          <div id="dossierFeatures" class="text-sm text-slate-200 leading-relaxed space-y-1"></div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <button
+            type="button"
+            id="dossierToggleMasteryBtn"
+            class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition min-h-[44px]"
+          ></button>
+          <button
+            type="button"
+            id="dossierOpenFlashcardBtn"
+            class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition min-h-[44px]"
+          >
+            Study in Flashcards
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FULL-SCREEN ZOOMABLE LIGHTBOX MODAL ==================== -->
+  <div id="lightboxModal" class="hidden fixed inset-0 z-[60] bg-black/95 flex flex-col">
+    <!-- Lightbox Top Bar -->
+    <div class="flex items-center justify-between gap-2 px-3 sm:px-5 py-3 bg-slate-950/90 border-b border-slate-800/80 z-10">
+      <div class="min-w-0">
+        <p id="lightboxTitle" class="text-xs sm:text-sm font-bold italic text-white truncate"></p>
+        <p id="lightboxSubtitle" class="text-[11px] font-mono text-slate-400 truncate"></p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          id="lightboxZoomToggleBtn"
+          class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 min-h-[40px]"
+        >
+          Zoom 2.2×
+        </button>
+        <button
+          type="button"
+          id="lightboxCloseBtn"
+          aria-label="Close full-screen viewer"
+          class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 border border-slate-700 flex items-center justify-center"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lightbox Viewport Stage -->
+    <div
+      id="lightboxStage"
+      class="flex-1 relative overflow-hidden flex items-center justify-center p-3 sm:p-6 cursor-zoom-in"
+    >
+      <div id="lightboxImgWrapper" class="max-w-full max-h-full flex items-center justify-center rounded-xl overflow-hidden">
+        <img
+          id="lightboxImg"
+          src=""
+          alt="Full screen plate inspection"
+          class="lightbox-img max-h-[78vh] max-w-[94vw] object-contain"
+        />
+      </div>
+
+      <!-- Prev / Next Gallery Arrows when multiple plates exist -->
+      <button
+        type="button"
+        id="lightboxPrevBtn"
+        aria-label="Previous plate"
+        class="hidden absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/90 hover:bg-sky-500 hover:text-slate-950 text-white border border-slate-700 flex items-center justify-center shadow-lg"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        id="lightboxNextBtn"
+        aria-label="Next plate"
+        class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/90 hover:bg-sky-500 hover:text-slate-950 text-white border border-slate-700 flex items-center justify-center shadow-lg"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Lightbox Bottom Hint -->
+    <div class="px-4 py-2 bg-slate-950/90 border-t border-slate-800/80 text-center text-[11px] text-slate-400">
+      Tap or click image to toggle magnification • Drag to pan when zoomed
+    </div>
+  </div>
+
+  <!-- ==================== APPLICATION LOGIC ==================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* =====================================================================
+       * 1. STORAGE KEYS & GLOBAL APPLICATION STATE
+       * ===================================================================== */
+      const STORAGE_KEYS = {
+        MASTERED: 'saeon_invertebrates_mastered_v1',
+        QUIZ_BEST: 'saeon_invertebrates_quiz_best_v1',
+      };
+
+      const state = {
+        species: [],
+        dataSource: {
+          mode: 'demo', // 'demo' | 'fetch' | 'local'
+          label: 'Demo Data (16 spp.)',
+        },
+        objectUrlsToRevoke: [],
+        activeTab: 'flashcards',
+
+        // Persisted progress
+        masteredCodes: loadMasteredSet(),
+        quizBestScores: loadQuizBestScores(),
+
+        // Flashcard study state
+        fc: {
+          phylum: 'ALL',
+          statusFilter: 'all', // 'all' | 'review' | 'mastered'
+          frontMode: 'photo', // 'photo' | 'name'
+          shuffle: false,
+          showPhylumHint: false,
+          missedFilterCodes: null, // Set<string> | null
+          deck: [],
+          index: 0,
+          isFlipped: false,
+          activePhotoIdx: 0,
+        },
+
+        // Quiz state
+        quiz: {
+          countSetting: 10, // 5 | 10 | 20 | 'all'
+          typeSetting: 'photo', // 'photo' | 'features' | 'mixed'
+          showCommonHints: true,
+          selectedPhylum: '__ALL__',
+          questions: [],
+          currentIdx: 0,
+          score: 0,
+          streak: 0,
+          bestStreak: 0,
+          answered: false,
+          selectedOptionIdx: null,
+          activePhotoIdx: 0,
+          history: [], // Array<{ species, promptType, isCorrect, userChoice }>
+        },
+
+        // Field Index state
+        indexView: {
+          search: '',
+          phylum: 'ALL',
+        },
+
+        // Dossier Modal state
+        dossierSpecies: null,
+        dossierPhotoIdx: 0,
+
+        // Lightbox state
+        lightbox: {
+          items: [], // Array<{ url, title, subtitle, isMap }>
+          currentIdx: 0,
+          zoomed: false,
+          panX: 0,
+          panY: 0,
+          isDragging: false,
+          startX: 0,
+          startY: 0,
+          moved: false,
+        },
+      };
+
+      /* =====================================================================
+       * 2. PERSISTENCE & DATA SANITIZATION HELPERS
+       * ===================================================================== */
+      function loadMasteredSet() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.MASTERED);
+          if (!raw) return new Set();
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? new Set(parsed.map(String)) : new Set();
+        } catch (err) {
+          return new Set();
+        }
+      }
+
+      function saveMasteredSet() {
+        try {
+          localStorage.setItem(STORAGE_KEYS.MASTERED, JSON.stringify([...state.masteredCodes]));
+        } catch (err) {
+          // Ignore storage quota issues
+        }
+      }
+
+      function loadQuizBestScores() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.QUIZ_BEST);
+          return raw ? JSON.parse(raw) : {};
+        } catch (err) {
+          return {};
+        }
+      }
+
+      function saveQuizBestScores() {
+        try {
+          localStorage.setItem(STORAGE_KEYS.QUIZ_BEST, JSON.stringify(state.quizBestScores));
+        } catch (err) {
+          // Ignore storage quota issues
+        }
+      }
+
+      /**
+       * Gracefully cleans common_name so null/undefined/"None"/"N/A" never render as text.
+       */
+      function formatCommonName(val) {
+        if (val === null || val === undefined) return '';
+        const cleaned = String(val).trim();
+        if (!cleaned) return '';
+        const lower = cleaned.toLowerCase();
+        if (lower === 'null' || lower === 'undefined' || lower === 'none' || lower === 'n/a' || lower === 'na' || lower === '-') {
+          return '';
+        }
+        return cleaned;
+      }
+
+      /**
+       * Normalizes distinguishing_features whether provided as a string or array of strings.
+       */
+      function normalizeFeaturesList(val) {
+        if (Array.isArray(val)) {
+          return val.map((item) => String(item).trim()).filter(Boolean);
+        }
+        if (typeof val === 'string') {
+          const trimmed = val.trim();
+          if (!trimmed) return ['Diagnostic details not listed in record.'];
+          // Split on newlines or bullet markers if multi-line
+          if (trimmed.includes('\n') || trimmed.includes('•')) {
+            return trimmed
+              .split(/\n|•/)
+              .map((s) => s.replace(/^[-*]\s*/, '').trim())
+              .filter(Boolean);
+          }
+          // Split semicolon-separated diagnostic clauses into readable bullet points
+          const clauses = trimmed.split(/;\s+/).map((s) => s.trim()).filter(Boolean);
+          return clauses.length > 1 ? clauses : [trimmed];
+        }
+        return ['Diagnostic details not listed in record.'];
+      }
+
+      function renderFeaturesHTML(featuresArray) {
+        if (featuresArray.length === 1) {
+          return `<p>${escapeHTML(featuresArray[0])}</p>`;
+        }
+        return `<ul class="list-disc pl-5 space-y-1">${featuresArray
+          .map((f) => `<li>${escapeHTML(f)}</li>`)
+          .join('')}</ul>`;
+      }
+
+      function escapeHTML(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function getBasename(filepath) {
+        if (!filepath) return '';
+        return String(filepath).split('/').pop().split('\\').pop().trim();
+      }
+
+      function showToast(message, variant = 'info') {
+        const container = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        const colors = {
+          info: 'bg-[#0e1a2b] border-sky-500/40 text-sky-200',
+          success: 'bg-[#0e1a2b] border-emerald-500/40 text-emerald-200',
+          warning: 'bg-[#0e1a2b] border-amber-500/40 text-amber-200',
+        };
+        el.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-2xl text-xs sm:text-sm font-medium backdrop-blur-md transition-all duration-300 ${colors[variant] || colors.info}`;
+        el.textContent = message;
+        container.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(-6px)';
+          setTimeout(() => el.remove(), 300);
+        }, 3600);
+      }
+
+      /* =====================================================================
+       * 3. PROCEDURAL SCIENTIFIC SVG ILLUSTRATIONS & SA BATHYMETRIC MAPS
+       * ===================================================================== */
+      function svgToDataUri(svgString) {
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString.trim())}`;
+      }
+
+      function createFallbackSpecimenUri(fbCode, sciName) {
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 827 827">
+            <rect width="827" height="827" fill="#000000"/>
+            <circle cx="413.5" cy="413.5" r="220" fill="none" stroke="#1e293b" stroke-width="3" stroke-dasharray="12 10"/>
+            <circle cx="413.5" cy="413.5" r="140" fill="none" stroke="#0f172a" stroke-width="2"/>
+            <text x="413.5" y="400" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="28">${escapeHTML(fbCode)}</text>
+            <text x="413.5" y="445" text-anchor="middle" fill="#475569" font-family="sans-serif" font-style="italic" font-size="22">${escapeHTML(sciName)}</text>
+          </svg>`;
+        return svgToDataUri(svg);
+      }
+
+      function createFallbackMapUri(fbCode) {
+        return generateSAMapSvg('shelf_all', fbCode);
+      }
+
+      /**
+       * Generates a crisp 650x588 South African coastline bathymetric distribution map
+       * from Orange River (NW) around Cape Agulhas to KwaZulu-Natal (NE).
+       */
+      function generateSAMapSvg(regionKey, fbCode) {
+        const stationPresets = {
+          west: [
+            [118, 125], [124, 152], [116, 180], [130, 212], [138, 248],
+            [144, 285], [148, 320], [156, 355], [164, 385], [174, 412]
+          ],
+          southwest: [
+            [154, 345], [165, 378], [176, 412], [190, 442], [214, 464],
+            [242, 472], [268, 468], [295, 456]
+          ],
+          agulhas: [
+            [196, 448], [224, 470], [255, 482], [285, 480], [312, 468],
+            [338, 452], [366, 434], [395, 415], [264, 456], [298, 445]
+          ],
+          south: [
+            [256, 462], [288, 454], [320, 442], [352, 428], [385, 412],
+            [418, 392], [448, 368], [472, 344]
+          ],
+          east: [
+            [468, 346], [492, 320], [514, 290], [534, 258], [552, 224],
+            [568, 192], [582, 160], [592, 132]
+          ],
+          slope_all: [
+            [112, 145], [126, 215], [140, 295], [158, 375], [186, 448],
+            [248, 492], [322, 478], [395, 432], [462, 368], [522, 292], [574, 195]
+          ],
+          shelf_all: [
+            [132, 175], [148, 265], [166, 358], [198, 438], [248, 462],
+            [302, 452], [358, 426], [414, 394], [466, 348], [518, 286], [564, 205]
+          ]
+        };
+
+        const dots = stationPresets[regionKey] || stationPresets.shelf_all;
+        const dotsMarkup = dots
+          .map(
+            ([cx, cy]) =>
+              `<circle cx="${cx}" cy="${cy}" r="7.5" fill="#e11d48" stroke="#ffffff" stroke-width="2.2" />`
+          )
+          .join('');
+
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 588">
+            <defs>
+              <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#e0f2fe"/>
+                <stop offset="100%" stop-color="#bae6fd"/>
+              </linearGradient>
+              <linearGradient id="landGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f1f5f9"/>
+                <stop offset="100%" stop-color="#e2e8f0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Ocean Background -->
+            <rect width="650" height="588" fill="url(#oceanGrad)"/>
+
+            <!-- Bathymetric Shelf & Slope Contours (200m & 1000m isobaths) -->
+            <path d="M 92,85 Q 112,240 142,385 Q 178,495 268,512 Q 362,502 452,402 Q 535,305 604,115"
+                  fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="6 4"/>
+            <path d="M 112,85 Q 130,235 158,372 Q 192,472 268,484 Q 350,474 435,384 Q 518,292 590,115"
+                  fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+
+            <!-- South African Landmass Polygon (Orange River -> Cape Point -> Agulhas -> Kosi Bay) -->
+            <path d="M 135,85 L 605,85 L 580,152 L 545,222 L 502,292 L 455,352 L 402,395 L 342,422 L 285,442 L 238,452 L 204,432 L 188,418 L 182,385 L 166,335 L 154,265 L 142,180 Z"
+                  fill="url(#landGrad)" stroke="#475569" stroke-width="2.5" stroke-linejoin="round"/>
+
+            <!-- Graticule Grid Lines -->
+            <g stroke="#94a3b8" stroke-width="0.8" stroke-opacity="0.45">
+              <line x1="0" y1="180" x2="650" y2="180"/>
+              <line x1="0" y1="360" x2="650" y2="360"/>
+              <line x1="210" y1="0" x2="210" y2="588"/>
+              <line x1="430" y1="0" x2="430" y2="588"/>
+            </g>
+
+            <!-- Graticule Labels -->
+            <g fill="#475569" font-family="monospace" font-size="13">
+              <text x="12" y="174">30°S</text>
+              <text x="12" y="354">35°S</text>
+              <text x="215" y="24">20°E</text>
+              <text x="435" y="24">30°E</text>
+            </g>
+
+            <!-- Geographic Labels -->
+            <text x="340" y="215" text-anchor="middle" fill="#334155" font-family="sans-serif" font-weight="700" font-size="19" letter-spacing="2">SOUTH AFRICA</text>
+            <text x="76" y="455" fill="#0369a1" font-family="sans-serif" font-weight="600" font-size="13" letter-spacing="1">ATLANTIC</text>
+            <text x="84" y="472" fill="#0369a1" font-family="sans-serif" font-weight="600" font-size="13" letter-spacing="1">OCEAN</text>
+            <text x="475" y="468" fill="#0369a1" font-family="sans-serif" font-weight="600" font-size="13" letter-spacing="1">INDIAN OCEAN</text>
+            <text x="275" y="472" text-anchor="middle" fill="#0284c7" font-family="sans-serif" font-style="italic" font-size="12">Agulhas Bank</text>
+
+            <!-- Coastal City Markers -->
+            <g fill="#1e293b" font-family="sans-serif" font-size="12" font-weight="600">
+              <circle cx="186" cy="402" r="3.5" fill="#0f172a"/>
+              <text x="196" y="405">Cape Town</text>
+              <circle cx="424" cy="382" r="3.5" fill="#0f172a"/>
+              <text x="355" y="374">Gqeberha</text>
+              <circle cx="545" cy="222" r="3.5" fill="#0f172a"/>
+              <text x="488" y="220">Durban</text>
+            </g>
+
+            <!-- Species Occurrence Station Dots -->
+            ${dotsMarkup}
+
+            <!-- Legend & Scale Bar -->
+            <rect x="22" y="506" width="232" height="62" rx="8" fill="#ffffff" fill-opacity="0.92" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="42" cy="527" r="6" fill="#e11d48" stroke="#ffffff" stroke-width="1.5"/>
+            <text x="56" y="531" fill="#0f172a" font-family="sans-serif" font-size="12" font-weight="600">Recorded Stations (${escapeHTML(fbCode)})</text>
+            <line x1="36" y1="550" x2="116" y2="550" stroke="#0f172a" stroke-width="2.5"/>
+            <text x="124" y="554" fill="#334155" font-family="monospace" font-size="11">200 km • 200m/1000m</text>
+          </svg>`;
+        return svgToDataUri(svg);
+      }
+
+      /**
+       * Generates bespoke 827x827 pure black-background specimen plates for the 16 Demo species.
+       */
+      function generateSpecimenPlateSvg(fbCode, variant = 1) {
+        const scaleLabel = variant === 1 ? '10 mm' : '5 mm (detail)';
+        let artwork = '';
+
+        switch (fbCode) {
+          case 'POR001': // Suberites dandelenae - orange globular hermit sponge
+            artwork = variant === 1 ? `
+              <defs>
+                <radialGradient id="subGrad" cx="40%" cy="35%" r="60%">
+                  <stop offset="0%" stop-color="#fdba74"/>
+                  <stop offset="55%" stop-color="#ea580c"/>
+                  <stop offset="100%" stop-color="#7c2d12"/>
+                </radialGradient>
+              </defs>
+              <path d="M 255,470 C 210,360 250,225 385,205 C 510,188 605,275 592,405 C 580,525 495,605 370,595 C 285,588 278,528 255,470 Z" fill="url(#subGrad)"/>
+              <ellipse cx="365" cy="310" rx="22" ry="15" fill="#431407" stroke="#fb923c" stroke-width="3"/>
+              <ellipse cx="475" cy="355" rx="18" ry="13" fill="#431407" stroke="#fb923c" stroke-width="3"/>
+              <ellipse cx="410" cy="445" rx="26" ry="18" fill="#431407" stroke="#fb923c" stroke-width="3"/>
+              <path d="M 275,515 C 235,540 225,585 268,602 C 305,616 335,580 322,545 Z" fill="#fed7aa" stroke="#9a3412" stroke-width="3"/>
+            ` : `
+              <circle cx="413" cy="413" r="245" fill="#c2410c" stroke="#fdba74" stroke-width="4"/>
+              <circle cx="413" cy="413" r="68" fill="#270c04" stroke="#fb923c" stroke-width="6"/>
+              <circle cx="310" cy="320" r="10" fill="#431407"/>
+              <circle cx="515" cy="335" r="12" fill="#431407"/>
+              <circle cx="330" cy="510" r="11" fill="#431407"/>
+              <circle cx="500" cy="495" r="9" fill="#431407"/>
+            `;
+            break;
+
+          case 'POR008': // Rossella antarctica - glass volcano sponge with spicule crown
+            artwork = `
+              <defs>
+                <linearGradient id="glassBody" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#cbd5e1"/>
+                  <stop offset="45%" stop-color="#f8fafc"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#e2e8f0" stroke-width="2.5" opacity="0.85">
+                <line x1="330" y1="245" x2="295" y2="145"/><line x1="360" y1="240" x2="345" y2="130"/>
+                <line x1="395" y1="238" x2="392" y2="122"/><line x1="430" y1="238" x2="435" y2="124"/>
+                <line x1="465" y1="242" x2="482" y2="134"/><line x1="495" y1="248" x2="530" y2="152"/>
+              </g>
+              <path d="M 315,245 C 285,365 292,505 335,585 L 492,585 C 535,505 542,365 512,245 Z" fill="url(#glassBody)"/>
+              <ellipse cx="413.5" cy="245" rx="98" ry="26" fill="#1e293b" stroke="#f1f5f9" stroke-width="4"/>
+              <g stroke="#cbd5e1" stroke-width="2" opacity="0.75">
+                <line x1="345" y1="585" x2="310" y2="685"/><line x1="380" y1="585" x2="362" y2="700"/>
+                <line x1="413" y1="585" x2="413" y2="708"/><line x1="448" y1="585" x2="465" y2="698"/>
+                <line x1="482" y1="585" x2="515" y2="682"/>
+              </g>
+            `;
+            break;
+
+          case 'POR014': // Geodia megaster - stony grey-tan ball sponge
+            artwork = `
+              <defs>
+                <radialGradient id="geoGrad" cx="38%" cy="32%" r="65%">
+                  <stop offset="0%" stop-color="#e7e5e4"/>
+                  <stop offset="60%" stop-color="#a8a29e"/>
+                  <stop offset="100%" stop-color="#57534e"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="413.5" cy="420" rx="225" ry="205" fill="url(#geoGrad)" stroke="#d6d3d1" stroke-width="3"/>
+              <ellipse cx="413.5" cy="295" rx="95" ry="38" fill="#57534e" stroke="#d6d3d1" stroke-width="3"/>
+              <circle cx="385" cy="295" r="11" fill="#1c1917"/>
+              <circle cx="415" cy="288" r="13" fill="#1c1917"/>
+              <circle cx="444" cy="298" r="10" fill="#1c1917"/>
+              <circle cx="408" cy="308" r="9" fill="#1c1917"/>
+            `;
+            break;
+
+          case 'CNI004': // Actinauge granulata - warty deep-water anemone
+            artwork = variant === 1 ? `
+              <defs>
+                <linearGradient id="anemCol" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#9f1239"/>
+                  <stop offset="50%" stop-color="#fb7185"/>
+                  <stop offset="100%" stop-color="#881337"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#fda4af" stroke-width="7" stroke-linecap="round" fill="none">
+                <path d="M 310,275 Q 250,205 220,165"/><path d="M 345,260 Q 305,180 290,135"/>
+                <path d="M 385,252 Q 375,165 370,120"/><path d="M 435,252 Q 445,165 452,120"/>
+                <path d="M 475,260 Q 515,180 532,135"/><path d="M 512,275 Q 572,205 602,165"/>
+              </g>
+              <path d="M 305,275 L 285,595 C 345,625 485,625 542,595 L 522,275 Z" fill="url(#anemCol)"/>
+              <g fill="#fecdd3" opacity="0.8">
+                <circle cx="345" cy="330" r="9"/><circle cx="413" cy="335" r="9"/><circle cx="480" cy="330" r="9"/>
+                <circle cx="340" cy="395" r="10"/><circle cx="413" cy="400" r="10"/><circle cx="485" cy="395" r="10"/>
+                <circle cx="335" cy="465" r="10"/><circle cx="413" cy="470" r="10"/><circle cx="490" cy="465" r="10"/>
+                <circle cx="330" cy="535" r="9"/><circle cx="413" cy="540" r="9"/><circle cx="495" cy="535" r="9"/>
+              </g>
+            ` : `
+              <circle cx="413" cy="413" r="165" fill="#be123c" stroke="#fda4af" stroke-width="5"/>
+              <ellipse cx="413" cy="413" rx="52" ry="26" fill="#4c0519" stroke="#fecdd3" stroke-width="4"/>
+              <g stroke="#fda4af" stroke-width="8" stroke-linecap="round">
+                <line x1="413" y1="248" x2="413" y2="145"/><line x1="413" y1="578" x2="413" y2="680"/>
+                <line x1="248" y1="413" x2="145" y2="413"/><line x1="578" y1="413" x2="680" y2="413"/>
+                <line x1="295" y1="295" x2="215" y2="215"/><line x1="530" y1="295" x2="610" y2="215"/>
+                <line x1="295" y1="530" x2="215" y2="610"/><line x1="530" y1="530" x2="610" y2="610"/>
+              </g>
+            `;
+            break;
+
+          case 'CNI019': // Thouarella hicksoni - golden-cream bottlebrush gorgonian
+            artwork = `
+              <path d="M 413,685 Q 405,430 418,145" fill="none" stroke="#d97706" stroke-width="8" stroke-linecap="round"/>
+              <g stroke="#fde68a" stroke-width="4" stroke-linecap="round">
+                <path d="M 416,185 L 335,155"/><path d="M 416,185 L 495,155"/>
+                <path d="M 415,235 L 305,205"/><path d="M 415,235 L 525,205"/>
+                <path d="M 414,290 L 285,260"/><path d="M 414,290 L 542,260"/>
+                <path d="M 413,350 L 280,320"/><path d="M 413,350 L 548,320"/>
+                <path d="M 413,410 L 290,385"/><path d="M 413,410 L 538,385"/>
+                <path d="M 413,470 L 305,445"/><path d="M 413,470 L 522,445"/>
+                <path d="M 413,530 L 325,510"/><path d="M 413,530 L 502,510"/>
+                <path d="M 413,585 L 350,570"/><path d="M 413,585 L 478,570"/>
+              </g>
+            `;
+            break;
+
+          case 'CNI027': // Anthoptilum grandiflorum - crimson sea pen
+            artwork = `
+              <path d="M 392,475 L 385,635 C 385,675 442,675 442,635 L 435,475 Z" fill="#fda4af"/>
+              <path d="M 402,140 L 392,475 L 435,475 L 424,140 Z" fill="#9f1239"/>
+              <g fill="#e11d48" stroke="#fecdd3" stroke-width="1.5">
+                <ellipse cx="365" cy="185" rx="28" ry="12" transform="rotate(-18 365 185)"/>
+                <ellipse cx="462" cy="185" rx="28" ry="12" transform="rotate(18 462 185)"/>
+                <ellipse cx="355" cy="240" rx="34" ry="14" transform="rotate(-18 355 240)"/>
+                <ellipse cx="472" cy="240" rx="34" ry="14" transform="rotate(18 472 240)"/>
+                <ellipse cx="350" cy="300" rx="36" ry="14" transform="rotate(-18 350 300)"/>
+                <ellipse cx="477" cy="300" rx="36" ry="14" transform="rotate(18 477 300)"/>
+                <ellipse cx="352" cy="360" rx="34" ry="14" transform="rotate(-18 352 360)"/>
+                <ellipse cx="475" cy="360" rx="34" ry="14" transform="rotate(18 475 360)"/>
+                <ellipse cx="360" cy="420" rx="30" ry="13" transform="rotate(-18 360 420)"/>
+                <ellipse cx="467" cy="420" rx="30" ry="13" transform="rotate(18 467 420)"/>
+              </g>
+            `;
+            break;
+
+          case 'MOL005': // Fusivoluta blaizei - elongate fusiform volute shell
+            artwork = variant === 1 ? `
+              <defs>
+                <linearGradient id="volGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#d6c7b2"/>
+                  <stop offset="45%" stop-color="#f5efe6"/>
+                  <stop offset="100%" stop-color="#a89882"/>
+                </linearGradient>
+              </defs>
+              <path d="M 413,115 L 368,240 L 342,345 C 325,445 348,565 398,690 L 424,690 C 468,565 488,445 478,345 L 456,240 Z" fill="url(#volGrad)" stroke="#78716c" stroke-width="2.5"/>
+              <path d="M 416,385 C 455,395 468,495 432,635 C 412,565 405,465 416,385 Z" fill="#44403c" stroke="#d6d3d1" stroke-width="2"/>
+              <path d="M 368,240 Q 413,255 456,240 M 348,325 Q 413,345 476,325" fill="none" stroke="#78716c" stroke-width="2.5"/>
+            ` : `
+              <path d="M 413,115 L 365,245 L 336,365 C 322,475 352,585 413,695 C 474,585 504,475 490,365 L 461,245 Z" fill="#e7dccb" stroke="#78716c" stroke-width="3"/>
+              <path d="M 365,245 Q 413,262 461,245 M 342,340 Q 413,365 484,340 M 338,445 Q 413,470 488,445" fill="none" stroke="#8c7a64" stroke-width="3"/>
+            `;
+            break;
+
+          case 'MOL018': // Athleta abyssicola - biconic nodular volute
+            artwork = `
+              <path d="M 413,145 L 330,285 L 295,365 C 295,485 345,595 413,675 C 481,595 531,485 531,365 L 496,285 Z" fill="#ede4d3" stroke="#78716c" stroke-width="3"/>
+              <path d="M 415,365 C 472,375 492,485 438,635 C 412,555 405,445 415,365 Z" fill="#292524" stroke="#f5f5f4" stroke-width="3"/>
+              <g fill="#b45309" opacity="0.65">
+                <circle cx="325" cy="355" r="7"/><circle cx="365" cy="365" r="7"/><circle cx="405" cy="368" r="7"/><circle cx="450" cy="365" r="7"/><circle cx="495" cy="355" r="7"/>
+              </g>
+            `;
+            break;
+
+          case 'MOL029': // Rossia enigmatica - southern bobtail squid
+            artwork = `
+              <ellipse cx="285" cy="340" rx="68" ry="52" fill="#9d174d" stroke="#f472b6" stroke-width="2.5"/>
+              <ellipse cx="542" cy="340" rx="68" ry="52" fill="#9d174d" stroke="#f472b6" stroke-width="2.5"/>
+              <path d="M 315,245 C 315,175 512,175 512,245 L 520,425 L 307,425 Z" fill="#831843" stroke="#f472b6" stroke-width="3"/>
+              <rect x="315" y="422" width="197" height="78" rx="24" fill="#9d174d"/>
+              <circle cx="342" cy="458" r="24" fill="#0f172a" stroke="#fbcfe8" stroke-width="4"/>
+              <circle cx="485" cy="458" r="24" fill="#0f172a" stroke="#fbcfe8" stroke-width="4"/>
+              <g stroke="#be185d" stroke-width="14" stroke-linecap="round" fill="none">
+                <path d="M 345,495 Q 325,585 295,635"/><path d="M 382,498 Q 375,595 365,655"/>
+                <path d="M 413,500 L 413,665"/><path d="M 445,498 Q 452,595 462,655"/>
+                <path d="M 482,495 Q 502,585 532,635"/>
+              </g>
+            `;
+            break;
+
+          case 'ART003': // Mursia cristiata - masked box crab with lateral spines
+            artwork = variant === 1 ? `
+              <path d="M 245,390 L 145,365 L 252,340 C 285,260 345,235 413,235 C 481,235 542,260 575,340 L 682,365 L 582,390 C 555,475 492,515 413,515 C 335,515 272,475 245,390 Z" fill="#fb923c" stroke="#fed7aa" stroke-width="3"/>
+              <path d="M 265,455 C 235,525 295,575 395,545 L 375,475 Z" fill="#fdba74" stroke="#9a3412" stroke-width="3"/>
+              <path d="M 562,455 C 592,525 532,575 432,545 L 452,475 Z" fill="#fdba74" stroke="#9a3412" stroke-width="3"/>
+              <g fill="#9a3412">
+                <circle cx="365" cy="315" r="7"/><circle cx="413" cy="305" r="7"/><circle cx="461" cy="315" r="7"/>
+                <circle cx="355" cy="375" r="7"/><circle cx="413" cy="365" r="7"/><circle cx="471" cy="375" r="7"/>
+              </g>
+            ` : `
+              <rect x="245" y="295" width="337" height="235" rx="75" fill="#fed7aa" stroke="#ea580c" stroke-width="5"/>
+              <line x1="413" y1="295" x2="413" y2="530" stroke="#9a3412" stroke-width="5"/>
+              <text x="413" y="422" text-anchor="middle" fill="#7c2d12" font-family="sans-serif" font-weight="700" font-size="22">CHELIPED SHIELD</text>
+            `;
+            break;
+
+          case 'ART015': // Chaceon macphersoni - deep-sea red crab
+            artwork = `
+              <g stroke="#dc2626" stroke-width="11" stroke-linecap="round" fill="none">
+                <path d="M 315,365 L 185,295 L 125,365"/><path d="M 310,405 L 165,405 L 110,485"/>
+                <path d="M 320,445 L 185,505 L 145,595"/><path d="M 345,475 L 245,575 L 225,665"/>
+                <path d="M 512,365 L 642,295 L 702,365"/><path d="M 517,405 L 662,405 L 717,485"/>
+                <path d="M 507,445 L 642,505 L 682,595"/><path d="M 482,475 L 582,575 L 602,665"/>
+              </g>
+              <polygon points="335,280 492,280 545,355 510,475 317,475 282,355" fill="#b91c1c" stroke="#fca5a5" stroke-width="3"/>
+              <path d="M 335,280 L 295,215 L 355,235" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 492,280 L 532,215 L 472,235" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
+            `;
+            break;
+
+          case 'ART026': // Nephropsis stewarti - Indian Ocean lobsterette
+            artwork = `
+              <g stroke="#fb923c" stroke-width="14" stroke-linecap="round" fill="none">
+                <path d="M 375,320 L 325,215 L 345,135"/><path d="M 452,320 L 502,215 L 482,135"/>
+              </g>
+              <path d="M 413,225 L 368,315 L 365,435 L 462,435 L 459,315 Z" fill="#f97316" stroke="#fed7aa" stroke-width="2.5"/>
+              <path d="M 368,435 L 375,615 L 452,615 L 459,435 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="2"/>
+              <ellipse cx="413" cy="645" rx="68" ry="28" fill="#fb923c"/>
+              <line x1="368" y1="480" x2="459" y2="480" stroke="#7c2d12" stroke-width="3"/>
+              <line x1="370" y1="525" x2="457" y2="525" stroke="#7c2d12" stroke-width="3"/>
+              <line x1="372" y1="570" x2="455" y2="570" stroke="#7c2d12" stroke-width="3"/>
+            `;
+            break;
+
+          case 'ECH007': // Hippasteria phrygiana - spiny cushion star
+            artwork = variant === 1 ? `
+              <polygon points="413,145 468,315 655,325 508,438 562,618 413,512 265,618 318,438 172,325 358,315"
+                       fill="#ea580c" stroke="#fed7aa" stroke-width="4" stroke-linejoin="round"/>
+              <g fill="#fef08a">
+                <circle cx="413" cy="245" r="7"/><circle cx="413" cy="315" r="8"/><circle cx="413" cy="395" r="9"/>
+                <circle cx="335" cy="355" r="7"/><circle cx="492" cy="355" r="7"/>
+                <circle cx="355" cy="455" r="7"/><circle cx="472" cy="455" r="7"/>
+              </g>
+            ` : `
+              <polygon points="413,145 468,315 655,325 508,438 562,618 413,512 265,618 318,438 172,325 358,315"
+                       fill="#fdba74" stroke="#c2410c" stroke-width="4" stroke-linejoin="round"/>
+              <g stroke="#9a3412" stroke-width="5">
+                <line x1="413" y1="165" x2="413" y2="413"/><line x1="635" y1="330" x2="413" y2="413"/>
+                <line x1="550" y1="600" x2="413" y2="413"/><line x1="276" y1="600" x2="413" y2="413"/>
+                <line x1="192" y1="330" x2="413" y2="413"/>
+              </g>
+              <circle cx="413" cy="413" r="24" fill="#431407"/>
+            `;
+            break;
+
+          case 'ECH024': // Spatangus capensis - Cape heart urchin
+            artwork = `
+              <path d="M 413,225 C 365,180 235,215 235,375 C 235,515 345,615 413,635 C 481,615 592,515 592,375 C 592,215 461,180 413,225 Z"
+                    fill="#581c87" stroke="#d8b4fe" stroke-width="3"/>
+              <g fill="none" stroke="#e9d5ff" stroke-width="3">
+                <ellipse cx="352" cy="335" rx="22" ry="68" transform="rotate(-32 352 335)"/>
+                <ellipse cx="475" cy="335" rx="22" ry="68" transform="rotate(32 475 335)"/>
+                <ellipse cx="358" cy="465" rx="20" ry="64" transform="rotate(28 358 465)"/>
+                <ellipse cx="468" cy="465" rx="20" ry="64" transform="rotate(-28 468 465)"/>
+              </g>
+            `;
+            break;
+
+          case 'BRA001': // Terebratulina meridionalis - ribbed cream lamp shell
+            artwork = `
+              <ellipse cx="413.5" cy="435" rx="155" ry="185" fill="#f5f5f4" stroke="#a8a29e" stroke-width="4"/>
+              <path d="M 365,260 L 413.5,195 L 462,260 Z" fill="#e7e5e4" stroke="#78716c" stroke-width="3"/>
+              <circle cx="413.5" cy="222" r="13" fill="#1c1917"/>
+              <g stroke="#a8a29e" stroke-width="2">
+                <line x1="413.5" y1="255" x2="413.5" y2="615"/><line x1="413.5" y1="255" x2="335" y2="595"/>
+                <line x1="413.5" y1="255" x2="492" y2="595"/><line x1="413.5" y1="255" x2="280" y2="535"/>
+                <line x1="413.5" y1="255" x2="547" y2="535"/>
+              </g>
+            `;
+            break;
+
+          case 'BRA004': // Kraussina rubra - red lamp shell
+          default:
+            artwork = `
+              <rect x="255" y="255" width="317" height="315" rx="125" fill="#e11d48" stroke="#fda4af" stroke-width="4"/>
+              <line x1="315" y1="255" x2="512" y2="255" stroke="#fecdd3" stroke-width="6"/>
+              <circle cx="413.5" cy="248" r="18" fill="#1f2937" stroke="#fda4af" stroke-width="3"/>
+              <g stroke="#fecdd3" stroke-width="3" opacity="0.8">
+                <line x1="413.5" y1="265" x2="413.5" y2="565"/><line x1="413.5" y1="265" x2="325" y2="545"/>
+                <line x1="413.5" y1="265" x2="502" y2="545"/><line x1="413.5" y1="265" x2="275" y2="485"/>
+                <line x1="413.5" y1="265" x2="552" y2="485"/>
+              </g>
+            `;
+            break;
+        }
+
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 827 827">
+            <rect width="827" height="827" fill="#000000"/>
+            ${artwork}
+            <!-- Scientific Scale Bar -->
+            <g transform="translate(625, 765)">
+              <line x1="0" y1="0" x2="140" y2="0" stroke="#94a3b8" stroke-width="3"/>
+              <line x1="0" y1="-7" x2="0" y2="7" stroke="#94a3b8" stroke-width="3"/>
+              <line x1="140" y1="-7" x2="140" y2="7" stroke="#94a3b8" stroke-width="3"/>
+              <text x="70" y="24" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="18">${escapeHTML(scaleLabel)}</text>
+            </g>
+          </svg>`;
+        return svgToDataUri(svg);
+      }
+
+      /* =====================================================================
+       * 4. BUILT-IN 16-SPECIES SAEON DEMO DATASET (ATKINSON & SINK, 2018)
+       * ===================================================================== */
+      function buildDemoSpeciesDataset() {
+        const rawDemo = [
+          {
+            fb_code: 'POR001',
+            phylum: 'Porifera',
+            scientific_name: 'Suberites dandelenae',
+            common_name: "Dandelena's Hermit Sponge",
+            distinguishing_features: [
+              'Firm, globular to lobate bright orange-ochre sponge frequently encrusting gastropod shells occupied by hermit crabs.',
+              'Smooth, velvety surface with scattered small circular oscules.',
+              'Skeleton composed of densely packed radiating tylostyle spicules.'
+            ],
+            mapRegion: 'west',
+            guide_page: 38,
+            variants: 2,
+          },
+          {
+            fb_code: 'POR008',
+            phylum: 'Porifera',
+            scientific_name: 'Rossella antarctica',
+            common_name: 'Glass Volcano Sponge',
+            distinguishing_features: [
+              'Barrel- to vase-shaped white or cream hexactinellid glass sponge with a wide apical osculum.',
+              'Surrounded by a prominent crown of projecting needle-like prostal spicules and anchored by a basal root tuft in soft mud.'
+            ],
+            mapRegion: 'southwest',
+            guide_page: 52,
+            variants: 1,
+          },
+          {
+            fb_code: 'POR014',
+            phylum: 'Porifera',
+            scientific_name: 'Geodia megaster',
+            common_name: 'Armoured Ball Sponge',
+            distinguishing_features: [
+              'Heavy, spherical pale grey-tan demosponge with a hard, stony sterraster cortex.',
+              'Clustered oscules concentrated inside a shallow apical depression.'
+            ],
+            mapRegion: 'agulhas',
+            guide_page: 64,
+            variants: 1,
+          },
+          {
+            fb_code: 'CNI004',
+            phylum: 'Cnidaria',
+            scientific_name: 'Actinauge granulata',
+            common_name: 'Warty Deep-Water Anemone',
+            distinguishing_features: [
+              'Thick-walled cylindrical column covered in longitudinal rows of hardened, wart-like tubercles (verrucae).',
+              'Upper scapus longitudinally ridged; salmon-pink oral disc with stout tapering tentacles.'
+            ],
+            mapRegion: 'west',
+            guide_page: 86,
+            variants: 2,
+          },
+          {
+            fb_code: 'CNI019',
+            phylum: 'Cnidaria',
+            scientific_name: 'Thouarella hicksoni',
+            common_name: 'Bottlebrush Primnoid Gorgonian',
+            distinguishing_features: [
+              'Delicate golden-cream bottlebrush sea fan with dense, spirally arranged short branchlets around a slender axis.',
+              'Polyps encased in overlapping calcareous scales bearing pointed marginal spines.'
+            ],
+            mapRegion: 'agulhas',
+            guide_page: 116,
+            variants: 1,
+          },
+          {
+            fb_code: 'CNI027',
+            phylum: 'Cnidaria',
+            scientific_name: 'Anthoptilum grandiflorum',
+            common_name: 'Giant Crimson Sea Pen',
+            distinguishing_features: [
+              'Tall, fleshy crimson-maroon sea pen with a pale bulbous muscular peduncle for anchoring in deep mud.',
+              'Large, non-retractile autozooid polyps arranged in oblique rows along the rachis.'
+            ],
+            mapRegion: 'slope_all',
+            guide_page: 132,
+            variants: 1,
+          },
+          {
+            fb_code: 'MOL005',
+            phylum: 'Mollusca',
+            scientific_name: 'Fusivoluta blaizei',
+            common_name: "Blaize's Volute",
+            distinguishing_features: [
+              'Elongate, fusiform creamy-tan shell with a tall spire and weak axial ribs on early whorls.',
+              'Fine spiral striae across body whorl and 2–3 oblique columellar pleats inside a narrow aperture.'
+            ],
+            mapRegion: 'south',
+            guide_page: 168,
+            variants: 2,
+          },
+          {
+            fb_code: 'MOL018',
+            phylum: 'Mollusca',
+            scientific_name: 'Athleta abyssicola',
+            common_name: 'Abyssal Spiny Volute',
+            distinguishing_features: [
+              'Sturdy biconic ivory-to-buff shell sculptured with strong cancellate axial ribs and spiral cords forming sharp shoulder nodules.',
+              'Inner lip glazed with a broad, glossy parietal callus.'
+            ],
+            mapRegion: 'west',
+            guide_page: 194,
+            variants: 1,
+          },
+          {
+            fb_code: 'MOL029',
+            phylum: 'Mollusca',
+            scientific_name: 'Rossia enigmatica',
+            common_name: 'Southern Bobtail Squid',
+            distinguishing_features: [
+              'Short, sac-like mottled purplish-brown mantle with large rounded lateral fins and broad head.',
+              'Eight short arms plus two retractile tentacular clubs; lacks an internal gladius.'
+            ],
+            mapRegion: 'southwest',
+            guide_page: 216,
+            variants: 1,
+          },
+          {
+            fb_code: 'ART003',
+            phylum: 'Arthropoda',
+            scientific_name: 'Mursia cristiata',
+            common_name: 'Masked Box Crab',
+            distinguishing_features: [
+              'Sub-circular, strongly convex orange-pink carapace with a prominent lateral spine on each side and rows of dorsal tubercles.',
+              'Broad, flattened chelipeds fold tightly like a shield against the front of the body.'
+            ],
+            mapRegion: 'shelf_all',
+            guide_page: 254,
+            variants: 2,
+          },
+          {
+            fb_code: 'ART015',
+            phylum: 'Arthropoda',
+            scientific_name: 'Chaceon macphersoni',
+            common_name: 'South African Deep-Sea Red Crab',
+            distinguishing_features: [
+              'Large hexagonal brick-red carapace bearing five anterolateral teeth per side and finely granulated dorsal regions.',
+              'Long, slender, laterally compressed walking legs.'
+            ],
+            mapRegion: 'slope_all',
+            guide_page: 278,
+            variants: 1,
+          },
+          {
+            fb_code: 'ART026',
+            phylum: 'Arthropoda',
+            scientific_name: 'Nephropsis stewarti',
+            common_name: 'Indian Ocean Lobsterette',
+            distinguishing_features: [
+              'Slender pale salmon-orange clawed lobster with reduced, unpigmented eyes and a long toothed rostrum.',
+              'Densely pubescent cylindrical chelae lacking the flattened shape of true langoustines.'
+            ],
+            mapRegion: 'east',
+            guide_page: 300,
+            variants: 1,
+          },
+          {
+            fb_code: 'ECH007',
+            phylum: 'Echinodermata',
+            scientific_name: 'Hippasteria phrygiana',
+            common_name: 'Spiny Cushion Star',
+            distinguishing_features: [
+              'Broad, pentagonal-stellate scarlet-orange sea star with an inflated central disc and short tapering arms.',
+              'Abactinal plates bear prominent large bivalved pedicellariae surrounded by beaded granules.'
+            ],
+            mapRegion: 'southwest',
+            guide_page: 342,
+            variants: 2,
+          },
+          {
+            fb_code: 'ECH024',
+            phylum: 'Echinodermata',
+            scientific_name: 'Spatangus capensis',
+            common_name: 'Cape Heart Urchin',
+            distinguishing_features: [
+              'Fragile, heart-shaped purplish-brown irregular urchin with a deep anterior ambulacral notch.',
+              'Sunken petaloid ambulacra dorsally and fine, silky backward-sweeping spines.'
+            ],
+            mapRegion: 'agulhas',
+            guide_page: 376,
+            variants: 1,
+          },
+          {
+            fb_code: 'BRA001',
+            phylum: 'Brachiopoda',
+            scientific_name: 'Terebratulina meridionalis',
+            common_name: 'Southern Ribbed Lamp Shell',
+            distinguishing_features: [
+              'Small, oval biconvex cream-white shell sculptured with fine radiating costellae.',
+              'Prominent circular pedicle foramen at the ventral beak and a short calcareous loop internally.'
+            ],
+            mapRegion: 'agulhas',
+            guide_page: 418,
+            variants: 1,
+          },
+          {
+            fb_code: 'BRA004',
+            phylum: 'Brachiopoda',
+            scientific_name: 'Kraussina rubra',
+            common_name: 'Red Lamp Shell',
+            distinguishing_features: [
+              'Thick, rounded-quadrate coral-red to orange shell with coarse radial ribs and a straight hinge line.',
+              'Large pedicle opening and internal brachidium with distinctive forked processes.'
+            ],
+            mapRegion: 'shelf_all',
+            guide_page: 424,
+            variants: 1,
+          },
+        ];
+
+        return rawDemo.map((item) => {
+          const imageUrls = [];
+          for (let v = 1; v <= item.variants; v++) {
+            imageUrls.push(generateSpecimenPlateSvg(item.fb_code, v));
+          }
+          return {
+            fb_code: item.fb_code,
+            phylum: item.phylum,
+            scientific_name: item.scientific_name,
+            common_name: formatCommonName(item.common_name),
+            distinguishing_features: normalizeFeaturesList(item.distinguishing_features),
+            imageUrls,
+            mapUrl: generateSAMapSvg(item.mapRegion, item.fb_code),
+            guide_page: item.guide_page,
+          };
+        });
+      }
+
+      /* =====================================================================
+       * 5. DATA LOADING ENGINE (AUTO FETCH -> LOCAL FOLDER -> DEMO FALLBACK)
+       * ===================================================================== */
+      function normalizeExternalRecords(rawJson, resolveImageUrl, resolveMapUrl) {
+        const list = Array.isArray(rawJson)
+          ? rawJson
+          : Array.isArray(rawJson?.species)
+          ? rawJson.species
+          : Array.isArray(rawJson?.data)
+          ? rawJson.data
+          : [];
+
+        return list
+          .filter((row) => row && (row.fb_code || row.scientific_name))
+          .map((row, idx) => {
+            const fbCode = String(row.fb_code || `SP${String(idx + 1).padStart(3, '0')}`).trim();
+            const sciName = String(row.scientific_name || 'Indeterminate species').trim();
+            const phylum = String(row.phylum || 'Unclassified').trim();
+            const commonName = formatCommonName(row.common_name);
+            const features = normalizeFeaturesList(row.distinguishing_features);
+            const guidePage = row.guide_page !== undefined && row.guide_page !== null && String(row.guide_page).trim() !== ''
+              ? String(row.guide_page).trim()
+              : '—';
+
+            const rawImages = Array.isArray(row.images) ? row.images : row.images ? [row.images] : [];
+            const imageUrls = rawImages
+              .map((fn) => resolveImageUrl(getBasename(fn), fbCode, sciName))
+              .filter(Boolean);
+
+            if (imageUrls.length === 0) {
+              imageUrls.push(createFallbackSpecimenUri(fbCode, sciName));
+            }
+
+            const mapFilename = row.map_file ? getBasename(row.map_file) : `${fbCode}_map.png`;
+            const mapUrl = resolveMapUrl(mapFilename, fbCode);
+
+            return {
+              fb_code: fbCode,
+              phylum,
+              scientific_name: sciName,
+              common_name: commonName,
+              distinguishing_features: features,
+              imageUrls,
+              mapUrl,
+              guide_page: guidePage,
+            };
+          });
+      }
+
+      function applyDataset(speciesArray, sourceMode, sourceLabel) {
+        state.species = speciesArray;
+        state.dataSource = { mode: sourceMode, label: sourceLabel };
+
+        // Update header pill
+        const badge = document.getElementById('datasetBadge');
+        const badgeText = document.getElementById('datasetBadgeText');
+        badgeText.textContent = sourceLabel;
+        if (sourceMode === 'demo') {
+          badge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0';
+          badge.querySelector('span').className = 'w-1.5 h-1.5 rounded-full bg-amber-400';
+        } else {
+          badge.className = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0';
+          badge.querySelector('span').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+        }
+
+        // Reset filters and rebuild all views
+        state.fc.phylum = 'ALL';
+        state.fc.missedFilterCodes = null;
+        state.indexView.phylum = 'ALL';
+        rebuildFlashcardDeck(true);
+        renderAllViews();
+      }
+
+      async function initDataOnStartup() {
+        try {
+          const response = await fetch('./extracted_species_data/species.json', { cache: 'no-store' });
+          if (!response.ok) throw new Error('Relative species.json not found');
+          const rawJson = await response.json();
+          const normalized = normalizeExternalRecords(
+            rawJson,
+            (basename) => `./extracted_species_data/images/${basename}`,
+            (basename) => `./extracted_species_data/maps/${basename}`
+          );
+          if (normalized.length > 0) {
+            applyDataset(normalized, 'fetch', `SAEON Guide (${normalized.length} spp.)`);
+            showToast(`Loaded ${normalized.length} species from ./extracted_species_data/`, 'success');
+            return;
+          }
+        } catch (err) {
+          // Expected when opened standalone or via file:// without a local HTTP server
+        }
+
+        const demoSpecies = buildDemoSpeciesDataset();
+        applyDataset(demoSpecies, 'demo', `Demo Data (${demoSpecies.length} spp.)`);
+      }
+
+      async function handleLocalFolderSelected(fileList) {
+        if (!fileList || fileList.length === 0) return;
+
+        let speciesJsonFile = null;
+        const assetUrlByBasename = new Map();
+
+        // Revoke any previously created object URLs
+        for (const url of state.objectUrlsToRevoke) {
+          URL.revokeObjectURL(url);
+        }
+        state.objectUrlsToRevoke = [];
+
+        for (let i = 0; i < fileList.length; i++) {
+          const file = fileList[i];
+          const lowerName = file.name.toLowerCase();
+          if (lowerName === 'species.json') {
+            speciesJsonFile = file;
+          } else if (
+            lowerName.endsWith('.jpg') ||
+            lowerName.endsWith('.jpeg') ||
+            lowerName.endsWith('.png') ||
+            lowerName.endsWith('.webp')
+          ) {
+            const objUrl = URL.createObjectURL(file);
+            state.objectUrlsToRevoke.push(objUrl);
+            assetUrlByBasename.set(lowerName, objUrl);
+          }
+        }
+
+        if (!speciesJsonFile) {
+          showToast('Could not find species.json inside the selected folder.', 'warning');
+          return;
+        }
+
+        try {
+          const text = await speciesJsonFile.text();
+          const rawJson = JSON.parse(text);
+          const normalized = normalizeExternalRecords(
+            rawJson,
+            (basename, fbCode, sciName) => {
+              const found = assetUrlByBasename.get(basename.toLowerCase());
+              return found || createFallbackSpecimenUri(fbCode, sciName);
+            },
+            (basename, fbCode) => {
+              const found = assetUrlByBasename.get(basename.toLowerCase());
+              return found || createFallbackMapUri(fbCode);
+            }
+          );
+
+          if (normalized.length === 0) {
+            showToast('species.json was empty or had an unrecognized format.', 'warning');
+            return;
+          }
+
+          applyDataset(normalized, 'local', `Local Folder (${normalized.length} spp.)`);
+          showToast(`Loaded ${normalized.length} species & local plates from folder!`, 'success');
+        } catch (err) {
+          showToast('Error parsing species.json: ' + err.message, 'warning');
+        }
+      }
+
+      /* =====================================================================
+       * 6. SHARED TAXONOMY & IMAGE ERROR FALLBACK HELPERS
+       * ===================================================================== */
+      function getPhylumCounts(speciesArray) {
+        const counts = new Map();
+        for (const sp of speciesArray) {
+          counts.set(sp.phylum, (counts.get(sp.phylum) || 0) + 1);
+        }
+        return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+      }
+
+      function setImgWithFallback(imgEl, srcUrl, fallbackFactory) {
+        imgEl.onerror = function () {
+          imgEl.onerror = null;
+          imgEl.src = fallbackFactory();
+        };
+        imgEl.src = srcUrl;
+      }
+
+      function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function updateHeaderMasteryPill() {
+        const total = state.species.length;
+        const masteredInSet = state.species.filter((sp) => state.masteredCodes.has(sp.fb_code)).length;
+        const badge = document.getElementById('navMasteryCount');
+        badge.textContent = `${masteredInSet}/${total}`;
+      }
+
+      /* =====================================================================
+       * 7. NAVIGATION TABS CONTROLLER
+       * ===================================================================== */
+      function switchTab(tabName) {
+        state.activeTab = tabName;
+        document.querySelectorAll('.nav-tab-btn').forEach((btn) => {
+          const isActive = btn.dataset.tab === tabName;
+          btn.className = isActive
+            ? 'nav-tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs sm:text-sm font-bold bg-sky-500 text-slate-950 shadow-sm transition min-h-[40px]'
+            : 'nav-tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition min-h-[40px]';
+        });
+
+        document.getElementById('view-flashcards').classList.toggle('hidden', tabName !== 'flashcards');
+        document.getElementById('view-quiz').classList.toggle('hidden', tabName !== 'quiz');
+        document.getElementById('view-index').classList.toggle('hidden', tabName !== 'index');
+
+        if (tabName === 'flashcards') renderFlashcardView();
+        if (tabName === 'quiz') renderQuizLobby();
+        if (tabName === 'index') renderFieldIndex();
+      }
+
+      /* =====================================================================
+       * 8. FLASHCARD STUDY MODE CONTROLLER
+       * ===================================================================== */
+      function rebuildFlashcardDeck(resetIndex = true) {
+        let filtered = [...state.species];
+
+        // Priority filter: Missed species from Quiz remediation
+        if (state.fc.missedFilterCodes && state.fc.missedFilterCodes.size > 0) {
+          filtered = filtered.filter((sp) => state.fc.missedFilterCodes.has(sp.fb_code));
+        } else {
+          if (state.fc.phylum !== 'ALL') {
+            filtered = filtered.filter((sp) => sp.phylum === state.fc.phylum);
+          }
+          if (state.fc.statusFilter === 'mastered') {
+            filtered = filtered.filter((sp) => state.masteredCodes.has(sp.fb_code));
+          } else if (state.fc.statusFilter === 'review') {
+            filtered = filtered.filter((sp) => !state.masteredCodes.has(sp.fb_code));
+          }
+        }
+
+        if (state.fc.shuffle) {
+          filtered = shuffleArray(filtered);
+        }
+
+        state.fc.deck = filtered;
+        if (resetIndex) {
+          state.fc.index = 0;
+          state.fc.isFlipped = false;
+          state.fc.activePhotoIdx = 0;
+        } else if (state.fc.index >= filtered.length) {
+          state.fc.index = Math.max(0, filtered.length - 1);
+          state.fc.isFlipped = false;
+          state.fc.activePhotoIdx = 0;
+        }
+      }
+
+      function renderFlashcardFilterControls() {
+        const phylumCounts = getPhylumCounts(state.species);
+        const total = state.species.length;
+
+        // Dropdown
+        const selectEl = document.getElementById('fcPhylumSelect');
+        selectEl.innerHTML =
+          `<option value="ALL">All Phyla (${total})</option>` +
+          phylumCounts
+            .map(([ph, count]) => `<option value="${escapeHTML(ph)}">${escapeHTML(ph)} (${count})</option>`)
+            .join('');
+        selectEl.value = state.fc.phylum;
+        selectEl.disabled = Boolean(state.fc.missedFilterCodes);
+
+        // Quick Pills
+        const pillsWrap = document.getElementById('fcPhylumPills');
+        const allPills = [['ALL', `All (${total})`], ...phylumCounts.map(([ph, c]) => [ph, `${ph} (${c})`])];
+        pillsWrap.innerHTML = allPills
+          .map(([val, label]) => {
+            const active = !state.fc.missedFilterCodes && state.fc.phylum === val;
+            return `<button type="button" data-fc-pill="${escapeHTML(val)}" class="px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap border transition min-h-[32px] ${
+              active
+                ? 'bg-sky-500/20 text-sky-300 border-sky-400/40'
+                : 'bg-[#060d16] text-slate-400 hover:text-slate-200 border-slate-800'
+            }">${escapeHTML(label)}</button>`;
+          })
+          .join('');
+
+        pillsWrap.querySelectorAll('button').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.fc.missedFilterCodes = null;
+            state.fc.phylum = btn.dataset.fcPill;
+            rebuildFlashcardDeck(true);
+            renderFlashcardView();
+          });
+        });
+
+        // Status Buttons
+        document.querySelectorAll('.fc-status-btn').forEach((btn) => {
+          const active = !state.fc.missedFilterCodes && btn.dataset.fcStatus === state.fc.statusFilter;
+          btn.className = active
+            ? 'fc-status-btn py-1.5 px-2 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition min-h-[34px]'
+            : 'fc-status-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition min-h-[34px]';
+        });
+
+        // Front Mode Buttons
+        document.querySelectorAll('.fc-front-btn').forEach((btn) => {
+          const active = btn.dataset.fcFront === state.fc.frontMode;
+          btn.className = active
+            ? 'fc-front-btn px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-sky-300 border border-sky-500/30 transition min-h-[34px]'
+            : 'fc-front-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition min-h-[34px]';
+        });
+
+        // Shuffle & Hint Toggles
+        const shuffleBtn = document.getElementById('fcShuffleToggle');
+        shuffleBtn.className = state.fc.shuffle
+          ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-400/40 transition min-h-[36px]'
+          : 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#060d16] text-slate-400 hover:text-slate-200 border border-slate-800 transition min-h-[36px]';
+
+        const hintBtn = document.getElementById('fcHintToggle');
+        hintBtn.className = state.fc.showPhylumHint
+          ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40 transition min-h-[36px]'
+          : 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#060d16] text-slate-400 hover:text-slate-200 border border-slate-800 transition min-h-[36px]';
+
+        // Missed Filter Banner
+        const missedBanner = document.getElementById('missedFilterBanner');
+        if (state.fc.missedFilterCodes && state.fc.missedFilterCodes.size > 0) {
+          missedBanner.classList.remove('hidden');
+          document.getElementById('missedFilterTitle').textContent =
+            `Reviewing ${state.fc.missedFilterCodes.size} Missed Species from Quiz`;
+        } else {
+          missedBanner.classList.add('hidden');
+        }
+      }
+
+      function renderFlashcardView() {
+        updateHeaderMasteryPill();
+        renderFlashcardFilterControls();
+
+        const deck = state.fc.deck;
+        const emptyEl = document.getElementById('fcEmptyState');
+        const activeContainer = document.getElementById('fcActiveContainer');
+        const bottomControls = document.getElementById('fcBottomControls');
+
+        if (deck.length === 0) {
+          emptyEl.classList.remove('hidden');
+          activeContainer.classList.add('hidden');
+          bottomControls.classList.add('hidden');
+          return;
+        }
+
+        emptyEl.classList.add('hidden');
+        activeContainer.classList.remove('hidden');
+        bottomControls.classList.remove('hidden');
+
+        const sp = deck[state.fc.index];
+        const isMastered = state.masteredCodes.has(sp.fb_code);
+        const photoIdx = Math.min(state.fc.activePhotoIdx, sp.imageUrls.length - 1);
+        state.fc.activePhotoIdx = photoIdx;
+
+        // Meta Header
+        document.getElementById('fcCounterText').textContent = `Card ${state.fc.index + 1} of ${deck.length}`;
+        const masteryBadge = document.getElementById('fcCardMasteryBadge');
+        if (isMastered) {
+          masteryBadge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/35';
+          masteryBadge.innerHTML = '<span>✓ Mastered</span>';
+        } else {
+          masteryBadge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700';
+          masteryBadge.innerHTML = '<span>Needs Review</span>';
+        }
+
+        // Toggle Front vs Back View
+        const frontView = document.getElementById('fcFrontView');
+        const backView = document.getElementById('fcBackView');
+        const flipBtnLabel = document.getElementById('fcFlipBtnLabel');
+
+        if (!state.fc.isFlipped) {
+          frontView.classList.remove('hidden');
+          backView.classList.add('hidden');
+          flipBtnLabel.textContent = 'Flip to Reveal';
+
+          const photoModeEl = document.getElementById('fcFrontPhotoMode');
+          const nameModeEl = document.getElementById('fcFrontNameMode');
+
+          if (state.fc.frontMode === 'photo') {
+            photoModeEl.classList.remove('hidden');
+            nameModeEl.classList.add('hidden');
+
+            const frontImg = document.getElementById('fcFrontImg');
+            setImgWithFallback(frontImg, sp.imageUrls[photoIdx], () =>
+              createFallbackSpecimenUri(sp.fb_code, sp.scientific_name)
+            );
+
+            // Phylum Hint
+            const hintWrap = document.getElementById('fcFrontPhylumHint');
+            if (state.fc.showPhylumHint) {
+              hintWrap.classList.remove('hidden');
+              document.getElementById('fcFrontPhylumText').textContent = sp.phylum;
+            } else {
+              hintWrap.classList.add('hidden');
+            }
+
+            // Multi-Photo Switcher Pills
+            const pillsEl = document.getElementById('fcFrontPhotoPills');
+            if (sp.imageUrls.length > 1) {
+              pillsEl.classList.remove('hidden');
+              pillsEl.innerHTML = sp.imageUrls
+                .map((_, idx) => {
+                  const active = idx === photoIdx;
+                  return `<button type="button" data-photo-idx="${idx}" class="w-7 h-7 rounded-lg text-xs font-mono font-bold transition ${
+                    active ? 'bg-sky-500 text-slate-950' : 'text-slate-300 hover:bg-slate-800'
+                  }">${idx + 1}</button>`;
+                })
+                .join('');
+              pillsEl.querySelectorAll('button').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  state.fc.activePhotoIdx = Number(btn.dataset.photoIdx);
+                  renderFlashcardView();
+                });
+              });
+            } else {
+              pillsEl.classList.add('hidden');
+            }
+          } else {
+            // Name First Front
+            photoModeEl.classList.add('hidden');
+            nameModeEl.classList.remove('hidden');
+
+            const namePhylumWrap = document.getElementById('fcNameFrontPhylumWrap');
+            if (state.fc.showPhylumHint) {
+              namePhylumWrap.classList.remove('hidden');
+              document.getElementById('fcNameFrontPhylumText').textContent = sp.phylum;
+            } else {
+              namePhylumWrap.classList.add('hidden');
+            }
+
+            document.getElementById('fcNameFrontSci').textContent = sp.scientific_name;
+            const commonEl = document.getElementById('fcNameFrontCommon');
+            if (sp.common_name) {
+              commonEl.textContent = sp.common_name;
+              commonEl.classList.remove('hidden');
+            } else {
+              commonEl.classList.add('hidden');
+            }
+            document.getElementById('fcNameFrontCode').textContent = sp.fb_code;
+          }
+        } else {
+          // CARD BACK
+          frontView.classList.add('hidden');
+          backView.classList.remove('hidden');
+          flipBtnLabel.textContent = 'Show Front';
+
+          document.getElementById('fcBackPhylum').textContent = sp.phylum;
+          document.getElementById('fcBackCode').textContent = sp.fb_code;
+          document.getElementById('fcBackPage').textContent = `Guide p. ${sp.guide_page}`;
+          document.getElementById('fcBackSciName').textContent = sp.scientific_name;
+
+          const backCommonEl = document.getElementById('fcBackCommonName');
+          if (sp.common_name) {
+            backCommonEl.textContent = sp.common_name;
+            backCommonEl.classList.remove('hidden');
+          } else {
+            backCommonEl.classList.add('hidden');
+          }
+
+          document.getElementById('fcBackPhotoCountLabel').textContent =
+            sp.imageUrls.length > 1 ? `Plate ${photoIdx + 1} of ${sp.imageUrls.length}` : '827×827 Plate';
+
+          const backMainImg = document.getElementById('fcBackMainImg');
+          setImgWithFallback(backMainImg, sp.imageUrls[photoIdx], () =>
+            createFallbackSpecimenUri(sp.fb_code, sp.scientific_name)
+          );
+
+          // Multi-image thumbnail strip
+          const thumbStrip = document.getElementById('fcBackThumbStrip');
+          if (sp.imageUrls.length > 1) {
+            thumbStrip.classList.remove('hidden');
+            thumbStrip.innerHTML = sp.imageUrls
+              .map((url, idx) => {
+                const active = idx === photoIdx;
+                return `<button type="button" data-thumb-idx="${idx}" class="specimen-black-box w-14 h-14 rounded-lg overflow-hidden border-2 shrink-0 transition ${
+                  active ? 'border-sky-400 ring-2 ring-sky-400/30' : 'border-slate-800 opacity-75 hover:opacity-100'
+                }">
+                  <img src="${url}" alt="Thumbnail ${idx + 1}" class="w-full h-full object-contain"/>
+                </button>`;
+              })
+              .join('');
+            thumbStrip.querySelectorAll('button').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                state.fc.activePhotoIdx = Number(btn.dataset.thumbIdx);
+                renderFlashcardView();
+              });
+            });
+          } else {
+            thumbStrip.classList.add('hidden');
+          }
+
+          // Coastal Distribution Map
+          const backMapImg = document.getElementById('fcBackMapImg');
+          setImgWithFallback(backMapImg, sp.mapUrl, () => createFallbackMapUri(sp.fb_code));
+
+          // Distinguishing Features
+          document.getElementById('fcBackFeatures').innerHTML = renderFeaturesHTML(sp.distinguishing_features);
+        }
+      }
+
+      function goToNextFlashcard() {
+        if (state.fc.deck.length === 0) return;
+        state.fc.index = (state.fc.index + 1) % state.fc.deck.length;
+        state.fc.isFlipped = false;
+        state.fc.activePhotoIdx = 0;
+        renderFlashcardView();
+      }
+
+      function goToPrevFlashcard() {
+        if (state.fc.deck.length === 0) return;
+        state.fc.index = (state.fc.index - 1 + state.fc.deck.length) % state.fc.deck.length;
+        state.fc.isFlipped = false;
+        state.fc.activePhotoIdx = 0;
+        renderFlashcardView();
+      }
+
+      function handleStillLearning() {
+        if (state.fc.deck.length === 0) return;
+        const current = state.fc.deck[state.fc.index];
+        state.masteredCodes.delete(current.fb_code);
+        saveMasteredSet();
+
+        // Re-queue this card 3 slots later in the current session so the user reviews it again soon
+        if (state.fc.deck.length > 2) {
+          const [removed] = state.fc.deck.splice(state.fc.index, 1);
+          const reinsertPos = Math.min(state.fc.index + 3, state.fc.deck.length);
+          state.fc.deck.splice(reinsertPos, 0, removed);
+          if (state.fc.index >= state.fc.deck.length) state.fc.index = 0;
+        } else {
+          state.fc.index = (state.fc.index + 1) % state.fc.deck.length;
+        }
+
+        state.fc.isFlipped = false;
+        state.fc.activePhotoIdx = 0;
+        renderFlashcardView();
+      }
+
+      function handleMasteredCard() {
+        if (state.fc.deck.length === 0) return;
+        const current = state.fc.deck[state.fc.index];
+        state.masteredCodes.add(current.fb_code);
+        saveMasteredSet();
+
+        if (state.fc.statusFilter === 'review') {
+          rebuildFlashcardDeck(false);
+        } else {
+          state.fc.index = (state.fc.index + 1) % state.fc.deck.length;
+          state.fc.isFlipped = false;
+          state.fc.activePhotoIdx = 0;
+        }
+        renderFlashcardView();
+      }
+
+      /* =====================================================================
+       * 9. MULTIPLE-CHOICE QUIZ CONTROLLER (GROUPED BY PHYLUM)
+       * ===================================================================== */
+      function renderQuizLobby() {
+        updateHeaderMasteryPill();
+        document.getElementById('quizLobbyView').classList.remove('hidden');
+        document.getElementById('quizActiveView').classList.add('hidden');
+        document.getElementById('quizResultsView').classList.add('hidden');
+
+        // Config buttons state
+        document.querySelectorAll('.q-count-btn').forEach((btn) => {
+          const val = btn.dataset.qCount === 'all' ? 'all' : Number(btn.dataset.qCount);
+          const active = val === state.quiz.countSetting;
+          btn.className = active
+            ? 'q-count-btn py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition min-h-[34px]'
+            : 'q-count-btn py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition min-h-[34px]';
+        });
+
+        document.querySelectorAll('.q-type-btn').forEach((btn) => {
+          const active = btn.dataset.qType === state.quiz.typeSetting;
+          btn.className = active
+            ? 'q-type-btn py-1.5 px-1 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition min-h-[34px]'
+            : 'q-type-btn py-1.5 px-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition min-h-[34px]';
+        });
+
+        const hintBtn = document.getElementById('qCommonHintToggle');
+        const hintStatus = document.getElementById('qCommonHintStatus');
+        if (state.quiz.showCommonHints) {
+          hintBtn.className = 'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-200 border border-emerald-500/35 transition min-h-[42px]';
+          hintStatus.textContent = 'ON';
+          hintStatus.className = 'px-2 py-0.5 rounded-md text-[10px] font-mono bg-emerald-500 text-slate-950 font-bold';
+        } else {
+          hintBtn.className = 'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold bg-[#060d16] text-slate-400 border border-slate-800 transition min-h-[42px]';
+          hintStatus.textContent = 'OFF';
+          hintStatus.className = 'px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-400';
+        }
+
+        // Mixed All-Phyla Hero Card stats
+        const total = state.species.length;
+        const totalMastered = state.species.filter((sp) => state.masteredCodes.has(sp.fb_code)).length;
+        document.getElementById('quizMixedMasteryText').textContent = `${totalMastered} / ${total} Species Mastered`;
+        const allBest = state.quizBestScores['__ALL__'];
+        const mixedBestEl = document.getElementById('quizMixedBestBadge');
+        if (allBest !== undefined) {
+          mixedBestEl.textContent = `Best: ${allBest}%`;
+          mixedBestEl.classList.remove('hidden');
+        } else {
+          mixedBestEl.classList.add('hidden');
+        }
+
+        // Phylum Cards Grid
+        const phylumGroups = getPhylumCounts(state.species);
+        const grid = document.getElementById('quizPhylumGrid');
+        grid.innerHTML = phylumGroups
+          .map(([phylum, count]) => {
+            const phylumSpecies = state.species.filter((sp) => sp.phylum === phylum);
+            const masteredCount = phylumSpecies.filter((sp) => state.masteredCodes.has(sp.fb_code)).length;
+            const pctMastered = count > 0 ? Math.round((masteredCount / count) * 100) : 0;
+            const bestScore = state.quizBestScores[phylum];
+
+            return `
+              <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800/90 p-4 flex flex-col justify-between gap-4 shadow-lg hover:border-slate-700 transition">
+                <div class="space-y-2.5">
+                  <div class="flex items-start justify-between gap-2">
+                    <div>
+                      <h4 class="text-base font-bold text-white">${escapeHTML(phylum)}</h4>
+                      <p class="text-xs text-slate-400">${count} ${count === 1 ? 'species' : 'species'}</p>
+                    </div>
+                    ${
+                      bestScore !== undefined
+                        ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Best: ${bestScore}%</span>`
+                        : `<span class="px-2 py-0.5 rounded-md text-[11px] font-mono bg-[#060d16] text-slate-500 border border-slate-800">Unplayed</span>`
+                    }
+                  </div>
+
+                  <!-- Mastery Bar -->
+                  <div class="space-y-1">
+                    <div class="flex justify-between text-[11px]">
+                      <span class="text-slate-400">Mastery</span>
+                      <span class="font-mono text-emerald-300">${masteredCount}/${count} (${pctMastered}%)</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-[#060d16] overflow-hidden border border-slate-800">
+                      <div class="h-full bg-emerald-400 transition-all duration-300" style="width: ${pctMastered}%"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  data-start-phylum="${escapeHTML(phylum)}"
+                  class="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-[#15253d] hover:bg-sky-500 hover:text-slate-950 text-sky-300 border border-sky-500/30 transition min-h-[44px]"
+                >
+                  Start ${escapeHTML(phylum)} Quiz
+                </button>
+              </div>
+            `;
+          })
+          .join('');
+
+        // Bind Start Quiz buttons
+        document.querySelectorAll('[data-start-phylum]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            startPhylumQuiz(btn.dataset.startPhylum);
+          });
+        });
+      }
+
+      function buildQuizQuestionItem(targetSpecies) {
+        // Intelligent Distractor Selection: prioritize same Phylum
+        const samePhylumPool = shuffleArray(
+          state.species.filter(
+            (sp) => sp.phylum === targetSpecies.phylum && sp.fb_code !== targetSpecies.fb_code
+          )
+        );
+        const distractors = samePhylumPool.slice(0, 3);
+
+        // Fallback to other phyla only if this phylum has fewer than 4 total species
+        if (distractors.length < 3) {
+          const usedCodes = new Set([targetSpecies.fb_code, ...distractors.map((d) => d.fb_code)]);
+          const otherPool = shuffleArray(state.species.filter((sp) => !usedCodes.has(sp.fb_code)));
+          distractors.push(...otherPool.slice(0, 3 - distractors.length));
+        }
+
+        const options = shuffleArray([targetSpecies, ...distractors]);
+        const promptType =
+          state.quiz.typeSetting === 'mixed'
+            ? Math.random() < 0.5
+              ? 'photo'
+              : 'features'
+            : state.quiz.typeSetting;
+
+        return {
+          target: targetSpecies,
+          options,
+          promptType,
+        };
+      }
+
+      function startPhylumQuiz(phylumKey) {
+        const pool =
+          phylumKey === '__ALL__'
+            ? [...state.species]
+            : state.species.filter((sp) => sp.phylum === phylumKey);
+
+        if (pool.length === 0) {
+          showToast('No species available in this phylum.', 'warning');
+          return;
+        }
+
+        const shuffledPool = shuffleArray(pool);
+        const limit =
+          state.quiz.countSetting === 'all'
+            ? shuffledPool.length
+            : Math.min(Number(state.quiz.countSetting), shuffledPool.length);
+
+        const selectedTargets = shuffledPool.slice(0, limit);
+
+        state.quiz.selectedPhylum = phylumKey;
+        state.quiz.questions = selectedTargets.map(buildQuizQuestionItem);
+        state.quiz.currentIdx = 0;
+        state.quiz.score = 0;
+        state.quiz.streak = 0;
+        state.quiz.bestStreak = 0;
+        state.quiz.answered = false;
+        state.quiz.selectedOptionIdx = null;
+        state.quiz.activePhotoIdx = 0;
+        state.quiz.history = [];
+
+        document.getElementById('quizLobbyView').classList.add('hidden');
+        document.getElementById('quizResultsView').classList.add('hidden');
+        document.getElementById('quizActiveView').classList.remove('hidden');
+
+        renderActiveQuizQuestion();
+      }
+
+      function renderActiveQuizQuestion() {
+        const q = state.quiz.questions[state.quiz.currentIdx];
+        const totalQ = state.quiz.questions.length;
+        const target = q.target;
+
+        document.getElementById('quizActivePhylumBadge').textContent =
+          state.quiz.selectedPhylum === '__ALL__' ? 'Mixed All Phyla' : state.quiz.selectedPhylum;
+        document.getElementById('quizScoreText').textContent = String(state.quiz.score);
+        document.getElementById('quizStreakText').textContent = String(state.quiz.streak);
+        document.getElementById('quizProgressLabel').textContent = `Question ${state.quiz.currentIdx + 1} of ${totalQ}`;
+        document.getElementById('quizPromptTypeLabel').textContent =
+          q.promptType === 'photo' ? 'Specimen Plate ID' : 'Diagnostic Features ID';
+
+        const pct = Math.round(((state.quiz.currentIdx + (state.quiz.answered ? 1 : 0)) / totalQ) * 100);
+        document.getElementById('quizProgressBar').style.width = `${Math.max(6, pct)}%`;
+
+        const photoPromptEl = document.getElementById('quizPhotoPrompt');
+        const featuresPromptEl = document.getElementById('quizFeaturesPrompt');
+
+        if (q.promptType === 'photo') {
+          document.getElementById('quizQuestionInstruction').textContent =
+            'Identify this South African offshore marine invertebrate from its specimen plate:';
+          photoPromptEl.classList.remove('hidden');
+          featuresPromptEl.classList.add('hidden');
+
+          const photoIdx = Math.min(state.quiz.activePhotoIdx, target.imageUrls.length - 1);
+          state.quiz.activePhotoIdx = photoIdx;
+          const promptImg = document.getElementById('quizPromptImg');
+          setImgWithFallback(promptImg, target.imageUrls[photoIdx], () =>
+            createFallbackSpecimenUri(target.fb_code, target.scientific_name)
+          );
+
+          const pillsEl = document.getElementById('quizPromptPhotoPills');
+          if (target.imageUrls.length > 1) {
+            pillsEl.classList.remove('hidden');
+            pillsEl.innerHTML = target.imageUrls
+              .map((_, idx) => {
+                const active = idx === photoIdx;
+                return `<button type="button" data-q-photo="${idx}" class="w-7 h-7 rounded-lg text-xs font-mono font-bold ${
+                  active ? 'bg-sky-500 text-slate-950' : 'text-slate-300 hover:bg-slate-800'
+                }">${idx + 1}</button>`;
+              })
+              .join('');
+            pillsEl.querySelectorAll('button').forEach((btn) => {
+              btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.quiz.activePhotoIdx = Number(btn.dataset.qPhoto);
+                renderActiveQuizQuestion();
+              });
+            });
+          } else {
+            pillsEl.classList.add('hidden');
+          }
+        } else {
+          document.getElementById('quizQuestionInstruction').textContent =
+            'Which species matches these distinguishing morphological traits?';
+          photoPromptEl.classList.add('hidden');
+          featuresPromptEl.classList.remove('hidden');
+          document.getElementById('quizFeaturesPhylumHint').textContent = `Phylum ${target.phylum}`;
+          document.getElementById('quizFeaturesPromptText').innerHTML = renderFeaturesHTML(
+            target.distinguishing_features
+          );
+        }
+
+        // Render A-D Option Buttons
+        const letters = ['A', 'B', 'C', 'D'];
+        const optionsGrid = document.getElementById('quizOptionsGrid');
+        optionsGrid.innerHTML = q.options
+          .map((opt, idx) => {
+            const isCorrectOpt = opt.fb_code === target.fb_code;
+            const isSelectedOpt = state.quiz.selectedOptionIdx === idx;
+
+            let cardClasses =
+              'bg-[#091322] hover:bg-[#132238] border-slate-700/80 text-slate-100';
+            let badgeClasses = 'bg-slate-800 text-sky-300 border-slate-700';
+
+            if (state.quiz.answered) {
+              if (isCorrectOpt) {
+                cardClasses = 'bg-emerald-500/20 border-emerald-400 text-white shadow-lg shadow-emerald-500/10';
+                badgeClasses = 'bg-emerald-500 text-slate-950 border-emerald-400';
+              } else if (isSelectedOpt) {
+                cardClasses = 'bg-rose-500/20 border-rose-400 text-rose-100';
+                badgeClasses = 'bg-rose-500 text-white border-rose-400';
+              } else {
+                cardClasses = 'bg-[#091322]/60 border-slate-800/70 text-slate-500';
+                badgeClasses = 'bg-slate-900 text-slate-600 border-slate-800';
+              }
+            }
+
+            const showCommon = state.quiz.showCommonHints && opt.common_name;
+
+            return `
+              <button
+                type="button"
+                data-opt-idx="${idx}"
+                ${state.quiz.answered ? 'disabled' : ''}
+                class="flex items-center gap-3 p-3.5 rounded-xl border text-left transition min-h-[56px] ${cardClasses}"
+              >
+                <span class="w-8 h-8 rounded-lg border flex items-center justify-center text-xs font-mono font-bold shrink-0 ${badgeClasses}">
+                  ${letters[idx]}
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs sm:text-sm font-bold italic leading-snug break-words">
+                    ${escapeHTML(opt.scientific_name)}
+                  </p>
+                  ${
+                    showCommon
+                      ? `<p class="text-[11px] text-amber-300/90 truncate mt-0.5">${escapeHTML(opt.common_name)}</p>`
+                      : ''
+                  }
+                </div>
+              </button>
+            `;
+          })
+          .join('');
+
+        if (!state.quiz.answered) {
+          optionsGrid.querySelectorAll('button').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              submitQuizAnswer(Number(btn.dataset.optIdx));
+            });
+          });
+        }
+
+        // Immediate Post-Answer Learning Drawer
+        const drawer = document.getElementById('quizLearningDrawer');
+        if (state.quiz.answered) {
+          drawer.classList.remove('hidden');
+          const chosen = q.options[state.quiz.selectedOptionIdx];
+          const wasRight = chosen && chosen.fb_code === target.fb_code;
+
+          drawer.className = wasRight
+            ? 'rounded-2xl bg-[#0e1a2b] border-2 border-emerald-500/50 p-4 sm:p-5 space-y-4 shadow-2xl'
+            : 'rounded-2xl bg-[#0e1a2b] border-2 border-rose-500/50 p-4 sm:p-5 space-y-4 shadow-2xl';
+
+          const verdictIcon = document.getElementById('quizVerdictIcon');
+          const verdictTitle = document.getElementById('quizVerdictTitle');
+          if (wasRight) {
+            verdictIcon.className = 'w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 flex items-center justify-center font-bold text-base shrink-0';
+            verdictIcon.textContent = '✓';
+            verdictTitle.className = 'text-sm sm:text-base font-bold text-emerald-300';
+            verdictTitle.textContent = 'Correct Identification!';
+          } else {
+            verdictIcon.className = 'w-9 h-9 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-400/40 flex items-center justify-center font-bold text-base shrink-0';
+            verdictIcon.textContent = '✕';
+            verdictTitle.className = 'text-sm sm:text-base font-bold text-rose-300';
+            verdictTitle.textContent = 'Incorrect — Review Diagnostic Traits';
+          }
+
+          document.getElementById('quizRevealSciName').textContent = target.scientific_name;
+          const revCommon = document.getElementById('quizRevealCommonName');
+          revCommon.textContent = target.common_name ? `(${target.common_name})` : '';
+          document.getElementById('quizRevealCode').textContent = target.fb_code;
+          document.getElementById('quizRevealPage').textContent = `Guide p. ${target.guide_page}`;
+          document.getElementById('quizRevealFeatures').innerHTML = renderFeaturesHTML(
+            target.distinguishing_features
+          );
+
+          const thumbImg = document.getElementById('quizRevealThumbImg');
+          setImgWithFallback(thumbImg, target.imageUrls[0], () =>
+            createFallbackSpecimenUri(target.fb_code, target.scientific_name)
+          );
+
+          const mapImg = document.getElementById('quizRevealMapImg');
+          setImgWithFallback(mapImg, target.mapUrl, () => createFallbackMapUri(target.fb_code));
+
+          document.getElementById('quizNextBtn').textContent =
+            state.quiz.currentIdx + 1 >= totalQ ? 'View Quiz Results' : 'Next Question';
+        } else {
+          drawer.classList.add('hidden');
+        }
+      }
+
+      function submitQuizAnswer(optionIdx) {
+        if (state.quiz.answered) return;
+        const q = state.quiz.questions[state.quiz.currentIdx];
+        const chosen = q.options[optionIdx];
+        const isCorrect = chosen.fb_code === q.target.fb_code;
+
+        state.quiz.answered = true;
+        state.quiz.selectedOptionIdx = optionIdx;
+
+        if (isCorrect) {
+          state.quiz.score += 1;
+          state.quiz.streak += 1;
+          state.quiz.bestStreak = Math.max(state.quiz.bestStreak, state.quiz.streak);
+        } else {
+          state.quiz.streak = 0;
+        }
+
+        state.quiz.history.push({
+          species: q.target,
+          promptType: q.promptType,
+          isCorrect,
+          userChoice: chosen,
+        });
+
+        renderActiveQuizQuestion();
+
+        // Smoothly scroll learning drawer into comfortable view on mobile
+        setTimeout(() => {
+          document.getElementById('quizLearningDrawer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
+      }
+
+      function advanceQuizQuestion() {
+        if (state.quiz.currentIdx + 1 < state.quiz.questions.length) {
+          state.quiz.currentIdx += 1;
+          state.quiz.answered = false;
+          state.quiz.selectedOptionIdx = null;
+          state.quiz.activePhotoIdx = 0;
+          renderActiveQuizQuestion();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          renderQuizResults();
+        }
+      }
+
+      function renderQuizResults() {
+        document.getElementById('quizActiveView').classList.add('hidden');
+        document.getElementById('quizResultsView').classList.remove('hidden');
+
+        const total = state.quiz.questions.length;
+        const score = state.quiz.score;
+        const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+        const phylumKey = state.quiz.selectedPhylum;
+
+        const prevBest = state.quizBestScores[phylumKey];
+        const isNewBest = prevBest === undefined || percent > prevBest;
+        if (isNewBest) {
+          state.quizBestScores[phylumKey] = percent;
+          saveQuizBestScores();
+        }
+
+        document.getElementById('quizResultNewBestBadge').classList.toggle('hidden', !isNewBest);
+        document.getElementById('quizResultPhylumTitle').textContent =
+          phylumKey === '__ALL__' ? 'Mixed All-Phyla Survey' : `Phylum ${phylumKey}`;
+        document.getElementById('quizResultPercent').textContent = `${percent}%`;
+        document.getElementById('quizResultSummaryText').textContent =
+          `${score} of ${total} correct • Best streak: ${state.quiz.bestStreak}`;
+
+        // Missed species remediation CTA
+        const missedUnique = [];
+        const seenMissed = new Set();
+        for (const h of state.quiz.history) {
+          if (!h.isCorrect && !seenMissed.has(h.species.fb_code)) {
+            seenMissed.add(h.species.fb_code);
+            missedUnique.push(h.species);
+          }
+        }
+
+        const remBox = document.getElementById('quizRemediationBox');
+        if (missedUnique.length > 0) {
+          remBox.classList.remove('hidden');
+          document.getElementById('studyMissedBtnText').textContent =
+            `Study Missed Species in Flashcards (${missedUnique.length})`;
+          document.getElementById('studyMissedFlashcardsBtn').onclick = () => {
+            state.fc.missedFilterCodes = new Set(missedUnique.map((s) => s.fb_code));
+            state.fc.statusFilter = 'all';
+            rebuildFlashcardDeck(true);
+            switchTab('flashcards');
+            showToast(`Loaded ${missedUnique.length} missed species into Flashcards`, 'info');
+          };
+        } else {
+          remBox.classList.add('hidden');
+        }
+
+        // Itemized Question Review List
+        const reviewList = document.getElementById('quizResultsReviewList');
+        reviewList.innerHTML = state.quiz.history
+          .map((item, idx) => {
+            const sp = item.species;
+            return `
+              <button
+                type="button"
+                data-review-code="${escapeHTML(sp.fb_code)}"
+                class="w-full flex items-center gap-3 p-3 rounded-xl bg-[#0e1a2b] hover:bg-[#15253d] border ${
+                  item.isCorrect ? 'border-emerald-500/25' : 'border-rose-500/35'
+                } text-left transition"
+              >
+                <div class="specimen-black-box w-12 h-12 rounded-lg overflow-hidden border border-slate-800 shrink-0">
+                  <img src="${sp.imageUrls[0]}" alt="${escapeHTML(sp.scientific_name)}" class="w-full h-full object-contain"/>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-bold ${item.isCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                      ${item.isCorrect ? '✓' : '✕'} Q${idx + 1}.
+                    </span>
+                    <span class="text-xs sm:text-sm font-bold italic text-white truncate">${escapeHTML(sp.scientific_name)}</span>
+                  </div>
+                  ${
+                    !item.isCorrect
+                      ? `<p class="text-[11px] text-rose-300 truncate">Your answer: <span class="italic">${escapeHTML(item.userChoice.scientific_name)}</span></p>`
+                      : sp.common_name
+                      ? `<p class="text-[11px] text-amber-300/85 truncate">${escapeHTML(sp.common_name)}</p>`
+                      : ''
+                  }
+                </div>
+                <div class="text-right shrink-0 space-y-0.5">
+                  <span class="block px-2 py-0.5 rounded text-[10px] font-mono bg-[#060d16] text-slate-300 border border-slate-800">${escapeHTML(sp.fb_code)}</span>
+                  <span class="block text-[10px] font-mono text-slate-500">p. ${escapeHTML(sp.guide_page)}</span>
+                </div>
+              </button>
+            `;
+          })
+          .join('');
+
+        reviewList.querySelectorAll('button').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const sp = state.species.find((s) => s.fb_code === btn.dataset.reviewCode);
+            if (sp) openDossierModal(sp);
+          });
+        });
+      }
+
+      /* =====================================================================
+       * 10. FIELD INDEX & SPECIMEN DOSSIER MODAL
+       * ===================================================================== */
+      function renderFieldIndex() {
+        const phylumCounts = getPhylumCounts(state.species);
+        const pillsWrap = document.getElementById('indexPhylumPills');
+        const pillItems = [['ALL', `All (${state.species.length})`], ...phylumCounts.map(([p, c]) => [p, `${p} (${c})`])];
+
+        pillsWrap.innerHTML = pillItems
+          .map(([val, label]) => {
+            const active = state.indexView.phylum === val;
+            return `<button type="button" data-idx-phylum="${escapeHTML(val)}" class="px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap border transition min-h-[32px] ${
+              active
+                ? 'bg-sky-500/20 text-sky-300 border-sky-400/40'
+                : 'bg-[#060d16] text-slate-400 hover:text-slate-200 border-slate-800'
+            }">${escapeHTML(label)}</button>`;
+          })
+          .join('');
+
+        pillsWrap.querySelectorAll('button').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.indexView.phylum = btn.dataset.idxPhylum;
+            renderFieldIndex();
+          });
+        });
+
+        const q = state.indexView.search.trim().toLowerCase();
+        const filtered = state.species.filter((sp) => {
+          if (state.indexView.phylum !== 'ALL' && sp.phylum !== state.indexView.phylum) return false;
+          if (!q) return true;
+          return (
+            sp.scientific_name.toLowerCase().includes(q) ||
+            sp.common_name.toLowerCase().includes(q) ||
+            sp.fb_code.toLowerCase().includes(q) ||
+            sp.phylum.toLowerCase().includes(q) ||
+            sp.distinguishing_features.some((f) => f.toLowerCase().includes(q))
+          );
+        });
+
+        document.getElementById('indexResultCount').textContent = `${filtered.length} ${
+          filtered.length === 1 ? 'species' : 'species'
+        }`;
+
+        const listEl = document.getElementById('indexListContainer');
+        if (filtered.length === 0) {
+          listEl.innerHTML = `
+            <div class="rounded-2xl bg-[#0e1a2b] border border-slate-800 p-8 text-center text-xs sm:text-sm text-slate-400">
+              No species matched "${escapeHTML(state.indexView.search)}".
+            </div>`;
+          return;
+        }
+
+        listEl.innerHTML = filtered
+          .map((sp) => {
+            const mastered = state.masteredCodes.has(sp.fb_code);
+            return `
+              <div class="flex items-center gap-3 p-2.5 sm:p-3 rounded-2xl bg-[#0e1a2b] hover:bg-[#142338] border border-slate-800/90 transition group">
+                <button
+                  type="button"
+                  data-open-dossier="${escapeHTML(sp.fb_code)}"
+                  class="flex items-center gap-3 min-w-0 flex-1 text-left"
+                >
+                  <div class="specimen-black-box w-14 h-14 rounded-xl overflow-hidden border border-slate-800 shrink-0">
+                    <img src="${sp.imageUrls[0]}" alt="${escapeHTML(sp.scientific_name)}" class="w-full h-full object-contain"/>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="text-[11px] font-semibold text-sky-300">${escapeHTML(sp.phylum)}</span>
+                      <span class="text-[10px] font-mono text-slate-500">• ${escapeHTML(sp.fb_code)}</span>
+                      <span class="text-[10px] font-mono text-slate-500">• p. ${escapeHTML(sp.guide_page)}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-bold italic text-white truncate mt-0.5">${escapeHTML(sp.scientific_name)}</p>
+                    ${
+                      sp.common_name
+                        ? `<p class="text-[11px] text-amber-300/90 truncate">${escapeHTML(sp.common_name)}</p>`
+                        : ''
+                    }
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  data-toggle-idx-mastery="${escapeHTML(sp.fb_code)}"
+                  title="${mastered ? 'Marked as Mastered' : 'Mark as Mastered'}"
+                  class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition shrink-0 min-h-[38px] ${
+                    mastered
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/35'
+                      : 'bg-[#060d16] text-slate-400 hover:text-slate-200 border-slate-800'
+                  }"
+                >
+                  ${mastered ? '✓ Mastered' : 'Review'}
+                </button>
+              </div>
+            `;
+          })
+          .join('');
+
+        listEl.querySelectorAll('[data-open-dossier]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const sp = state.species.find((s) => s.fb_code === btn.dataset.openDossier);
+            if (sp) openDossierModal(sp);
+          });
+        });
+
+        listEl.querySelectorAll('[data-toggle-idx-mastery]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const code = btn.dataset.toggleIdxMastery;
+            if (state.masteredCodes.has(code)) {
+              state.masteredCodes.delete(code);
+            } else {
+              state.masteredCodes.add(code);
+            }
+            saveMasteredSet();
+            updateHeaderMasteryPill();
+            renderFieldIndex();
+          });
+        });
+      }
+
+      function openDossierModal(sp) {
+        state.dossierSpecies = sp;
+        state.dossierPhotoIdx = 0;
+        renderDossierModal();
+        document.getElementById('dossierModal').classList.remove('hidden');
+      }
+
+      function closeDossierModal() {
+        document.getElementById('dossierModal').classList.add('hidden');
+        state.dossierSpecies = null;
+      }
+
+      function renderDossierModal() {
+        const sp = state.dossierSpecies;
+        if (!sp) return;
+
+        document.getElementById('dossierPhylum').textContent = sp.phylum;
+        document.getElementById('dossierCode').textContent = sp.fb_code;
+        document.getElementById('dossierPage').textContent = `Guide p. ${sp.guide_page}`;
+        document.getElementById('dossierSciName').textContent = sp.scientific_name;
+
+        const commonEl = document.getElementById('dossierCommonName');
+        if (sp.common_name) {
+          commonEl.textContent = sp.common_name;
+          commonEl.classList.remove('hidden');
+        } else {
+          commonEl.classList.add('hidden');
+        }
+
+        const mainImg = document.getElementById('dossierMainImg');
+        setImgWithFallback(mainImg, sp.imageUrls[state.dossierPhotoIdx], () =>
+          createFallbackSpecimenUri(sp.fb_code, sp.scientific_name)
+        );
+
+        const thumbStrip = document.getElementById('dossierThumbStrip');
+        if (sp.imageUrls.length > 1) {
+          thumbStrip.classList.remove('hidden');
+          thumbStrip.innerHTML = sp.imageUrls
+            .map((url, idx) => {
+              const active = idx === state.dossierPhotoIdx;
+              return `<button type="button" data-d-thumb="${idx}" class="specimen-black-box w-12 h-12 rounded-lg overflow-hidden border-2 shrink-0 ${
+                active ? 'border-sky-400' : 'border-slate-800 opacity-75'
+              }"><img src="${url}" alt="View ${idx + 1}" class="w-full h-full object-contain"/></button>`;
+            })
+            .join('');
+          thumbStrip.querySelectorAll('button').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              state.dossierPhotoIdx = Number(btn.dataset.dThumb);
+              renderDossierModal();
+            });
+          });
+        } else {
+          thumbStrip.classList.add('hidden');
+        }
+
+        const mapImg = document.getElementById('dossierMapImg');
+        setImgWithFallback(mapImg, sp.mapUrl, () => createFallbackMapUri(sp.fb_code));
+
+        document.getElementById('dossierFeatures').innerHTML = renderFeaturesHTML(
+          sp.distinguishing_features
+        );
+
+        const mastered = state.masteredCodes.has(sp.fb_code);
+        const masteryBtn = document.getElementById('dossierToggleMasteryBtn');
+        if (mastered) {
+          masteryBtn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 transition min-h-[44px]';
+          masteryBtn.textContent = '✓ Mastered (Tap to Unmark)';
+        } else {
+          masteryBtn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition min-h-[44px]';
+          masteryBtn.textContent = 'Mark as Mastered';
+        }
+      }
+
+      /* =====================================================================
+       * 11. FULL-SCREEN ZOOMABLE LIGHTBOX MODAL
+       * ===================================================================== */
+      function openSpeciesLightbox(sp, initialMode = 'photo', initialPhotoIdx = 0) {
+        const items = sp.imageUrls.map((url, idx) => ({
+          url,
+          title: sp.scientific_name,
+          subtitle: `${sp.fb_code} • ${sp.phylum} • Guide p. ${sp.guide_page}${
+            sp.imageUrls.length > 1 ? ` • Plate ${idx + 1}/${sp.imageUrls.length}` : ''
+          }`,
+          isMap: false,
+        }));
+
+        items.push({
+          url: sp.mapUrl,
+          title: `${sp.scientific_name} — Coastal Distribution`,
+          subtitle: `${sp.fb_code} • South African Shelf & Slope • Guide p. ${sp.guide_page}`,
+          isMap: true,
+        });
+
+        state.lightbox.items = items;
+        state.lightbox.currentIdx = initialMode === 'map' ? items.length - 1 : initialPhotoIdx;
+        resetLightboxZoom();
+        renderLightbox();
+        document.getElementById('lightboxModal').classList.remove('hidden');
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightboxModal').classList.add('hidden');
+        resetLightboxZoom();
+      }
+
+      function resetLightboxZoom() {
+        state.lightbox.zoomed = false;
+        state.lightbox.panX = 0;
+        state.lightbox.panY = 0;
+        state.lightbox.isDragging = false;
+        applyLightboxTransform();
+      }
+
+      function applyLightboxTransform() {
+        const imgEl = document.getElementById('lightboxImg');
+        const stageEl = document.getElementById('lightboxStage');
+        const toggleBtn = document.getElementById('lightboxZoomToggleBtn');
+
+        if (state.lightbox.zoomed) {
+          imgEl.style.transform = `translate(${state.lightbox.panX}px, ${state.lightbox.panY}px) scale(2.2)`;
+          stageEl.classList.remove('cursor-zoom-in');
+          stageEl.classList.add('cursor-grab');
+          toggleBtn.textContent = 'Reset 1×';
+        } else {
+          imgEl.style.transform = 'translate(0px, 0px) scale(1)';
+          stageEl.classList.remove('cursor-grab');
+          stageEl.classList.add('cursor-zoom-in');
+          toggleBtn.textContent = 'Zoom 2.2×';
+        }
+      }
+
+      function renderLightbox() {
+        const item = state.lightbox.items[state.lightbox.currentIdx];
+        if (!item) return;
+
+        document.getElementById('lightboxTitle').textContent = item.title;
+        document.getElementById('lightboxSubtitle').textContent = item.subtitle;
+
+        const wrapper = document.getElementById('lightboxImgWrapper');
+        wrapper.className = item.isMap
+          ? 'max-w-full max-h-full flex items-center justify-center rounded-xl overflow-hidden bg-slate-50 p-1'
+          : 'max-w-full max-h-full flex items-center justify-center rounded-xl overflow-hidden bg-black';
+
+        const imgEl = document.getElementById('lightboxImg');
+        imgEl.src = item.url;
+
+        const hasMulti = state.lightbox.items.length > 1;
+        document.getElementById('lightboxPrevBtn').classList.toggle('hidden', !hasMulti);
+        document.getElementById('lightboxNextBtn').classList.toggle('hidden', !hasMulti);
+      }
+
+      /* =====================================================================
+       * 12. EVENT LISTENERS & TOUCH GESTURES
+       * ===================================================================== */
+      function renderAllViews() {
+        updateHeaderMasteryPill();
+        if (state.activeTab === 'flashcards') renderFlashcardView();
+        if (state.activeTab === 'quiz') renderQuizLobby();
+        if (state.activeTab === 'index') renderFieldIndex();
+      }
+
+      function bindEvents() {
+        // Folder Picker
+        const folderInput = document.getElementById('folderPickerInput');
+        document.getElementById('loadFolderBtn').addEventListener('click', () => {
+          folderInput.click();
+        });
+        folderInput.addEventListener('change', (e) => {
+          handleLocalFolderSelected(e.target.files);
+          e.target.value = '';
+        });
+
+        // Navigation Tabs
+        document.querySelectorAll('.nav-tab-btn').forEach((btn) => {
+          btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        // Flashcard Filter Controls
+        document.getElementById('fcPhylumSelect').addEventListener('change', (e) => {
+          state.fc.missedFilterCodes = null;
+          state.fc.phylum = e.target.value;
+          rebuildFlashcardDeck(true);
+          renderFlashcardView();
+        });
+
+        document.querySelectorAll('.fc-status-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.fc.missedFilterCodes = null;
+            state.fc.statusFilter = btn.dataset.fcStatus;
+            rebuildFlashcardDeck(true);
+            renderFlashcardView();
+          });
+        });
+
+        document.querySelectorAll('.fc-front-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.fc.frontMode = btn.dataset.fcFront;
+            state.fc.isFlipped = false;
+            renderFlashcardView();
+          });
+        });
+
+        document.getElementById('fcShuffleToggle').addEventListener('click', () => {
+          state.fc.shuffle = !state.fc.shuffle;
+          rebuildFlashcardDeck(true);
+          renderFlashcardView();
+        });
+
+        document.getElementById('fcHintToggle').addEventListener('click', () => {
+          state.fc.showPhylumHint = !state.fc.showPhylumHint;
+          renderFlashcardView();
+        });
+
+        document.getElementById('clearMissedFilterBtn').addEventListener('click', () => {
+          state.fc.missedFilterCodes = null;
+          rebuildFlashcardDeck(true);
+          renderFlashcardView();
+        });
+
+        document.getElementById('fcResetFiltersBtn').addEventListener('click', () => {
+          state.fc.phylum = 'ALL';
+          state.fc.statusFilter = 'all';
+          state.fc.missedFilterCodes = null;
+          rebuildFlashcardDeck(true);
+          renderFlashcardView();
+        });
+
+        // Flashcard Flip & Zoom Interactions
+        document.getElementById('fcFrontView').addEventListener('click', () => {
+          state.fc.isFlipped = true;
+          renderFlashcardView();
+        });
+
+        document.getElementById('fcFlipToFrontBtn').addEventListener('click', () => {
+          state.fc.isFlipped = false;
+          renderFlashcardView();
+        });
+
+        document.getElementById('fcFlipBtn').addEventListener('click', () => {
+          state.fc.isFlipped = !state.fc.isFlipped;
+          renderFlashcardView();
+        });
+
+        document.getElementById('fcFrontZoomBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const sp = state.fc.deck[state.fc.index];
+          if (sp) openSpeciesLightbox(sp, 'photo', state.fc.activePhotoIdx);
+        });
+
+        document.getElementById('fcBackMainImg').addEventListener('click', () => {
+          const sp = state.fc.deck[state.fc.index];
+          if (sp) openSpeciesLightbox(sp, 'photo', state.fc.activePhotoIdx);
+        });
+
+        document.getElementById('fcBackImgZoomBtn').addEventListener('click', () => {
+          const sp = state.fc.deck[state.fc.index];
+          if (sp) openSpeciesLightbox(sp, 'photo', state.fc.activePhotoIdx);
+        });
+
+        document.getElementById('fcBackMapImg').addEventListener('click', () => {
+          const sp = state.fc.deck[state.fc.index];
+          if (sp) openSpeciesLightbox(sp, 'map', 0);
+        });
+
+        document.getElementById('fcBackMapZoomBtn').addEventListener('click', () => {
+          const sp = state.fc.deck[state.fc.index];
+          if (sp) openSpeciesLightbox(sp, 'map', 0);
+        });
+
+        // Flashcard Navigation & Spaced-Recall Buttons
+        document.getElementById('fcPrevBtn').addEventListener('click', goToPrevFlashcard);
+        document.getElementById('fcNextBtn').addEventListener('click', goToNextFlashcard);
+        document.getElementById('fcStillLearningBtn').addEventListener('click', handleStillLearning);
+        document.getElementById('fcMasteredBtn').addEventListener('click', handleMasteredCard);
+
+        // Touch Swipe Support on Flashcard Surface
+        const cardSurface = document.getElementById('fcCardSurface');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchDeltaX = 0;
+        let isHorizontalSwipe = false;
+
+        cardSurface.addEventListener(
+          'touchstart',
+          (e) => {
+            if (e.touches.length !== 1) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchDeltaX = 0;
+            isHorizontalSwipe = false;
+            cardSurface.classList.add('swiping');
+          },
+          { passive: true }
+        );
+
+        cardSurface.addEventListener(
+          'touchmove',
+          (e) => {
+            if (e.touches.length !== 1) return;
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            if (!isHorizontalSwipe && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+              isHorizontalSwipe = true;
+            }
+            if (isHorizontalSwipe) {
+              touchDeltaX = dx;
+              cardSurface.style.transform = `translateX(${dx * 0.35}px)`;
+            }
+          },
+          { passive: true }
+        );
+
+        cardSurface.addEventListener('touchend', () => {
+          cardSurface.classList.remove('swiping');
+          cardSurface.style.transform = '';
+          if (isHorizontalSwipe && Math.abs(touchDeltaX) > 60) {
+            if (touchDeltaX < 0) {
+              goToNextFlashcard();
+            } else {
+              goToPrevFlashcard();
+            }
+          }
+          isHorizontalSwipe = false;
+          touchDeltaX = 0;
+        });
+
+        // Keyboard shortcuts for desktop Flashcards & Lightbox
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if (!document.getElementById('lightboxModal').classList.contains('hidden')) {
+              closeLightbox();
+              return;
+            }
+            if (!document.getElementById('dossierModal').classList.contains('hidden')) {
+              closeDossierModal();
+              return;
+            }
+          }
+
+          if (
+            state.activeTab === 'flashcards' &&
+            document.getElementById('lightboxModal').classList.contains('hidden') &&
+            document.activeElement.tagName !== 'INPUT' &&
+            document.activeElement.tagName !== 'SELECT'
+          ) {
+            if (e.key === 'ArrowRight') goToNextFlashcard();
+            if (e.key === 'ArrowLeft') goToPrevFlashcard();
+            if (e.key === ' ') {
+              e.preventDefault();
+              state.fc.isFlipped = !state.fc.isFlipped;
+              renderFlashcardView();
+            }
+          }
+        });
+
+        // Quiz Configuration Listeners
+        document.querySelectorAll('.q-count-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.quiz.countSetting = btn.dataset.qCount === 'all' ? 'all' : Number(btn.dataset.qCount);
+            renderQuizLobby();
+          });
+        });
+
+        document.querySelectorAll('.q-type-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.quiz.typeSetting = btn.dataset.qType;
+            renderQuizLobby();
+          });
+        });
+
+        document.getElementById('qCommonHintToggle').addEventListener('click', () => {
+          state.quiz.showCommonHints = !state.quiz.showCommonHints;
+          renderQuizLobby();
+        });
+
+        // Active Quiz Listeners
+        document.getElementById('quizExitBtn').addEventListener('click', renderQuizLobby);
+        document.getElementById('quizNextBtn').addEventListener('click', advanceQuizQuestion);
+        document.getElementById('quizRetryBtn').addEventListener('click', () => {
+          startPhylumQuiz(state.quiz.selectedPhylum);
+        });
+        document.getElementById('quizBackToLobbyBtn').addEventListener('click', renderQuizLobby);
+
+        document.getElementById('quizPromptZoomBtn').addEventListener('click', () => {
+          const q = state.quiz.questions[state.quiz.currentIdx];
+          if (q) openSpeciesLightbox(q.target, 'photo', state.quiz.activePhotoIdx);
+        });
+
+        document.getElementById('quizRevealThumbImg').addEventListener('click', () => {
+          const q = state.quiz.questions[state.quiz.currentIdx];
+          if (q) openSpeciesLightbox(q.target, 'photo', 0);
+        });
+
+        document.getElementById('quizRevealMapImg').addEventListener('click', () => {
+          const q = state.quiz.questions[state.quiz.currentIdx];
+          if (q) openSpeciesLightbox(q.target, 'map', 0);
+        });
+
+        document.getElementById('quizRevealMapZoomBtn').addEventListener('click', () => {
+          const q = state.quiz.questions[state.quiz.currentIdx];
+          if (q) openSpeciesLightbox(q.target, 'map', 0);
+        });
+
+        // Field Index Search
+        document.getElementById('indexSearchInput').addEventListener('input', (e) => {
+          state.indexView.search = e.target.value;
+          renderFieldIndex();
+        });
+
+        // Dossier Modal Listeners
+        document.getElementById('dossierCloseBtn').addEventListener('click', closeDossierModal);
+        document.getElementById('dossierModal').addEventListener('click', (e) => {
+          if (e.target.id === 'dossierModal') closeDossierModal();
+        });
+
+        document.getElementById('dossierMainImg').addEventListener('click', () => {
+          if (state.dossierSpecies) openSpeciesLightbox(state.dossierSpecies, 'photo', state.dossierPhotoIdx);
+        });
+        document.getElementById('dossierImgZoomBtn').addEventListener('click', () => {
+          if (state.dossierSpecies) openSpeciesLightbox(state.dossierSpecies, 'photo', state.dossierPhotoIdx);
+        });
+        document.getElementById('dossierMapImg').addEventListener('click', () => {
+          if (state.dossierSpecies) openSpeciesLightbox(state.dossierSpecies, 'map', 0);
+        });
+        document.getElementById('dossierMapZoomBtn').addEventListener('click', () => {
+          if (state.dossierSpecies) openSpeciesLightbox(state.dossierSpecies, 'map', 0);
+        });
+
+        document.getElementById('dossierToggleMasteryBtn').addEventListener('click', () => {
+          if (!state.dossierSpecies) return;
+          const code = state.dossierSpecies.fb_code;
+          if (state.masteredCodes.has(code)) {
+            state.masteredCodes.delete(code);
+          } else {
+            state.masteredCodes.add(code);
+          }
+          saveMasteredSet();
+          updateHeaderMasteryPill();
+          renderDossierModal();
+          if (state.activeTab === 'index') renderFieldIndex();
+        });
+
+        document.getElementById('dossierOpenFlashcardBtn').addEventListener('click', () => {
+          if (!state.dossierSpecies) return;
+          const targetCode = state.dossierSpecies.fb_code;
+          closeDossierModal();
+          state.fc.missedFilterCodes = null;
+          state.fc.phylum = 'ALL';
+          state.fc.statusFilter = 'all';
+          rebuildFlashcardDeck(true);
+          const foundIdx = state.fc.deck.findIndex((s) => s.fb_code === targetCode);
+          if (foundIdx >= 0) state.fc.index = foundIdx;
+          switchTab('flashcards');
+        });
+
+        // Lightbox Zoom & Pan Listeners
+        document.getElementById('lightboxCloseBtn').addEventListener('click', closeLightbox);
+        document.getElementById('lightboxZoomToggleBtn').addEventListener('click', () => {
+          state.lightbox.zoomed = !state.lightbox.zoomed;
+          if (!state.lightbox.zoomed) {
+            state.lightbox.panX = 0;
+            state.lightbox.panY = 0;
+          }
+          applyLightboxTransform();
+        });
+
+        document.getElementById('lightboxPrevBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const len = state.lightbox.items.length;
+          state.lightbox.currentIdx = (state.lightbox.currentIdx - 1 + len) % len;
+          resetLightboxZoom();
+          renderLightbox();
+        });
+
+        document.getElementById('lightboxNextBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const len = state.lightbox.items.length;
+          state.lightbox.currentIdx = (state.lightbox.currentIdx + 1) % len;
+          resetLightboxZoom();
+          renderLightbox();
+        });
+
+        const lbStage = document.getElementById('lightboxStage');
+        const lbImg = document.getElementById('lightboxImg');
+
+        lbStage.addEventListener('mousedown', (e) => {
+          if (e.target.closest('button')) return;
+          state.lightbox.isDragging = true;
+          state.lightbox.moved = false;
+          state.lightbox.startX = e.clientX - state.lightbox.panX;
+          state.lightbox.startY = e.clientY - state.lightbox.panY;
+          lbImg.classList.add('dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!state.lightbox.isDragging) return;
+          const dx = e.clientX - state.lightbox.startX;
+          const dy = e.clientY - state.lightbox.startY;
+          if (Math.abs(dx - state.lightbox.panX) > 4 || Math.abs(dy - state.lightbox.panY) > 4) {
+            state.lightbox.moved = true;
+          }
+          if (state.lightbox.zoomed) {
+            state.lightbox.panX = dx;
+            state.lightbox.panY = dy;
+            applyLightboxTransform();
+          }
+        });
+
+        window.addEventListener('mouseup', (e) => {
+          if (!state.lightbox.isDragging) return;
+          state.lightbox.isDragging = false;
+          lbImg.classList.remove('dragging');
+          if (!state.lightbox.moved && !e.target.closest('button')) {
+            state.lightbox.zoomed = !state.lightbox.zoomed;
+            if (!state.lightbox.zoomed) {
+              state.lightbox.panX = 0;
+              state.lightbox.panY = 0;
+            }
+            applyLightboxTransform();
+          }
+        });
+
+        // Touch pan & tap-to-zoom on Lightbox
+        lbStage.addEventListener(
+          'touchstart',
+          (e) => {
+            if (e.touches.length !== 1 || e.target.closest('button')) return;
+            state.lightbox.isDragging = true;
+            state.lightbox.moved = false;
+            state.lightbox.startX = e.touches[0].clientX - state.lightbox.panX;
+            state.lightbox.startY = e.touches[0].clientY - state.lightbox.panY;
+            lbImg.classList.add('dragging');
+          },
+          { passive: true }
+        );
+
+        lbStage.addEventListener(
+          'touchmove',
+          (e) => {
+            if (!state.lightbox.isDragging || e.touches.length !== 1) return;
+            const dx = e.touches[0].clientX - state.lightbox.startX;
+            const dy = e.touches[0].clientY - state.lightbox.startY;
+            if (Math.abs(dx - state.lightbox.panX) > 6 || Math.abs(dy - state.lightbox.panY) > 6) {
+              state.lightbox.moved = true;
+            }
+            if (state.lightbox.zoomed) {
+              state.lightbox.panX = dx;
+              state.lightbox.panY = dy;
+              applyLightboxTransform();
+            }
+          },
+          { passive: true }
+        );
+
+        lbStage.addEventListener('touchend', (e) => {
+          if (!state.lightbox.isDragging) return;
+          state.lightbox.isDragging = false;
+          lbImg.classList.remove('dragging');
+          if (!state.lightbox.moved && !e.target.closest('button')) {
+            e.preventDefault();
+            state.lightbox.zoomed = !state.lightbox.zoomed;
+            if (!state.lightbox.zoomed) {
+              state.lightbox.panX = 0;
+              state.lightbox.panY = 0;
+            }
+            applyLightboxTransform();
+          }
+        });
+      }
+
+      /* =====================================================================
+       * 13. BOOTSTRAP APPLICATION
+       * ===================================================================== */
+      bindEvents();
+      switchTab('flashcards');
+      initDataOnStartup();
+    })();
+  </script>
+<!-- Offline Support & Download Button -->
+<script>
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+      const btn = document.createElement('button');
+      const isSaved = localStorage.getItem('saeon_offline_ready') === 'true';
+      btn.textContent = isSaved ? 'Saved Offline ✓' : 'Save for Offline';
+      Object.assign(btn.style, {
+        position: 'fixed',
+        bottom: '16px',
+        right: '16px',
+        zIndex: '9999',
+        padding: '10px 16px',
+        borderRadius: '999px',
+        border: 'none',
+        backgroundColor: isSaved ? '#059669' : '#0284c7',
+        color: '#ffffff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        fontWeight: '600',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+        cursor: 'pointer'
+      });
+
+      btn.onclick = async () => {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.style.backgroundColor = '#475569';
+        btn.textContent = 'Preparing species list...';
+
+        try {
+          const res = await fetch('./extracted_species_data/species.json');
+          const species = await res.json();
+          const urls = new Set(['./', './index.html', './extracted_species_data/species.json']);
+
+          species.forEach((sp) => {
+            if (Array.isArray(sp.images)) {
+              sp.images.forEach((img) => {
+                urls.add(img.includes('/') ? `./extracted_species_data/${img}` : `./extracted_species_data/images/${img}`);
+              });
+            }
+            if (sp.map_file) {
+              urls.add(sp.map_file.includes('/') ? `./extracted_species_data/${sp.map_file}` : `./extracted_species_data/maps/${sp.map_file}`);
+            }
+          });
+
+          const list = Array.from(urls);
+          let done = 0;
+          const batchSize = 8;
+
+          for (let i = 0; i < list.length; i += batchSize) {
+            const batch = list.slice(i, i + batchSize);
+            await Promise.all(batch.map((u) => fetch(u).catch(() => {})));
+            done = Math.min(i + batchSize, list.length);
+            btn.textContent = `Saving offline... ${done} / ${list.length}`;
+          }
+
+          localStorage.setItem('saeon_offline_ready', 'true');
+          btn.style.backgroundColor = '#059669';
+          btn.textContent = 'Saved Offline ✓';
+        } catch (err) {
+          btn.style.backgroundColor = '#dc2626';
+          btn.textContent = 'Offline save failed — Retry';
+        }
+        btn.disabled = false;
+      };
+
+      document.body.appendChild(btn);
+    });
+  }
+</script>
+</body>
+</html>
